@@ -5,7 +5,6 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var path = require('path');
 var fs = require('fs');
-var ext = require('ext');
 
 //views directory for all template files
 app.set('port', (process.env.PORT || 4000));
