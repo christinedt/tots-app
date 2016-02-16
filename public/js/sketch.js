@@ -1,12 +1,22 @@
 var TotsUno, 
     options, 
     sliderValue, 
-    sketch, 
+    sketch,
+    socket,
     slider,
     isActiveTotMode = false,
     sliderOptions = {};
 
 function setup() {
+  socket = io.connect('http://localhost:4000');
+  socket.on('mouse',
+    function(data) {
+      // Draw a blue circle
+      fill(0,0,255);
+      noStroke();
+      ellipse(data.x,data.y,80,80);
+    }
+  );
 
   sketch = createCanvas(windowWidth, windowHeight)
     .parent("sketch-container");
@@ -58,9 +68,9 @@ function setup() {
 }
 
 function draw() {
-  background(backgroundSlider.value());
+  // background(backgroundSlider.value());
 
-  TotsUno.runTots(sliderOptions);
+  // TotsUno.runTots(sliderOptions);
 }
 
 function setSliderOptions(e) {
@@ -97,6 +107,16 @@ function mousePressed() {
   if(isActiveTotMode){
     TotsUno.checkActiveTot(mouseX, mouseY);
   }
+}
+
+function mouseDragged() {
+  // Make a little object with mouseX and mouseY
+  var data = {
+    x: mouseX,
+    y: mouseY
+  };
+  // Send that object to the socket
+  socket.emit('mouse',data);
 }
 
 function windowResized() {

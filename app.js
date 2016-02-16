@@ -39,6 +39,14 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function(data) {
     console.log("Client has disconnected " + data);
   });
+  socket.on('mouse',
+    function(data) {
+      // Data comes in as whatever was sent, including objects
+      console.log("Received: 'mouse' " + data.x + " " + data.y);      
+      // Send it to all other clients
+      io.sockets.emit('mouse', data);
+    }
+  );
 });
 
 // function handleRequest(req, res) {
