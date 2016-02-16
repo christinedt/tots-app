@@ -1,38 +1,28 @@
 // set variables for the environment
-var express = require('express');
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var path = require('path');
-var fs = require('fs');
-var ext = require('extjs-node');
+var express = require('express'),
+    app = require('express')(),
+    server = require('http').Server(app),
+    io = require('socket.io')(server),
+    path = require('path'),
+    fs = require('fs'),
+    ext = require('extjs-node'),
+    publicDir = process.argv[2] || __dirname + '/public',
+    hostname = process.env.HOSTNAME || 'localhost';
 
 //views directory for all template files
 app.set('port', (process.env.PORT || 4000));
 
 
-app.set('views', path.join(__dirname, 'public/views'));
+app.set('views', path.join(publicDir, '/views'));
 app.set('view engine', 'ejs');
 app.set('view options', { basedir: process.env.__dirname});
 //instruct express to server up static assets
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 //set routes
 app.get('/', function(req, res) {
-	res.render('index',
-    // Callback function for reading
-    function (err, data) {
-      // if there is an error
-      if (err) {
-        res.writeHead(500);
-        return res.end('Error loading index.html :' + err);
-      }
-      // Otherwise, send the data, the contents of the file
-      res.writeHead(200);
-      res.end(data);
-    }
-  );
+	res.sendFile(path.join(publicDir, '/views/index.html'));
 });
 
 // Set server port
@@ -45,6 +35,9 @@ io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
   socket.on('my other event', function (data) {
     console.log(data);
+  });
+  socket.on('disconnect', function(data) {
+    console.log("Client has disconnected " + data);
   });
 });
 
