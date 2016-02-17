@@ -33,6 +33,7 @@ body {
 	display: block;
 	overflow: auto;
 	position: fixed;
+	visibility: hidden;
 	width: 325px;
 	z-index: 2;
 
