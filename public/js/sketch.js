@@ -8,7 +8,7 @@ var TotsUno,
     sliderOptions = {};
 
 function setup() {
-  socket = io.connect('http://localhost:4000');
+  socket = io.connect('https://boiling-escarpment-82743.herokuapp.com/');
   socket.on('mouse',
     function(data) {
       // Draw a blue circle
