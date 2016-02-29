@@ -1,53 +1,82 @@
 // set variables for the environment
 var express = require('express'),
-    app = require('express')(),
+    app = express(),
+    session =require('express-session'),
     server = require('http').Server(app),
+    bodyParser = require('body-parser'),
     io = require('socket.io')(server),
     path = require('path'),
     fs = require('fs'),
     ext = require('extjs-node'),
     publicDir = process.argv[2] || __dirname + '/public',
-    hostname = process.env.HOSTNAME || 'localhost';
+    hostname = process.env.HOSTNAME || 'localhost',
+    sess;
 
-//views directory for all template files
-app.set('port', (process.env.PORT || 4000));
+appInit();
+// socketsInit();
+
+function appInit() {
+
+  //views directory for all template files
+  app.set('port', (process.env.PORT || 4000));
+  app.set('views', path.join(publicDir, '/views'));
+  app.set('view engine', 'ejs');
+  app.set('view options', { basedir: process.env.__dirname});
+
+  //
+  app.use(session({secret: 'ssshhhhh'}));
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: true}));
+
+  //instruct express to server up static assets
+  app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.set('views', path.join(publicDir, '/views'));
-app.set('view engine', 'ejs');
-app.set('view options', { basedir: process.env.__dirname});
-//instruct express to server up static assets
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-//set routes
-app.get('/', function(req, res) {
-	res.sendFile(path.join(publicDir, '/views/index.html'));
-});
-
-// Set server port
-server.listen(app.get('port'), function() {
-	console.log('Node app is running on port', app.get('port'));
-});
-
-io.on('connection', function (socket) {
-	console.log('new client: ' + socket.id);
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+  //set routes
+  app.get('/', function(req, res) {
+    sess = req.session;
+    res.render('index');
   });
-  socket.on('disconnect', function(data) {
-    console.log("Client has disconnected " + data);
+
+  app.post('/submit',function(req,res){
+    sess=req.session;
+    //In this we are assigning email to sess.email variable.
+    //email comes from HTML page.
+    sess.email=req.body.email;
+    res.end(sess.email);
   });
-  socket.on('mouse',
-    function(data) {
-      // Data comes in as whatever was sent, including objects
-      console.log("Received: 'mouse' " + data.x + " " + data.y);      
-      // Send it to all other clients
-      io.sockets.emit('mouse', data);
-    }
-  );
-});
+
+  // Set server port
+  server.listen(app.get('port'), function() {
+    console.log('Node app is running on port', app.get('port'));
+  });
+
+}
+
+function socketsInit() {
+
+  io.on('connection', function (socket) {
+    console.log('new client: ' + socket.id);
+    socket.emit('news', { hello: 'world' });
+
+    socket.on('my other event', function (data) {
+      console.log(data);
+    });
+
+    socket.on('disconnect', function(data) {
+      console.log("Client has disconnected " + data);
+    });
+
+    socket.on('mouse',
+      function(data) {
+        // Data comes in as whatever was sent, including objects
+        console.log("Received: 'mouse' " + data.x + " " + data.y);      
+        // Send it to all other clients
+        io.sockets.emit('mouse', data);
+      }
+    );
+  });
+}
 
 // function handleRequest(req, res) {
 //   // What did we request?

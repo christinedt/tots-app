@@ -3,7 +3,7 @@
 <html lang="en-us">
     <head>
         <meta charset="utf-8">
-        <title>HTML5 Boilerplate: The web&#8217;s most popular front-end template</title>
+        <title>Social Explorer</title>
         <meta name="description" content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -11,21 +11,37 @@
 
         <!-- smoosh -->
         <!-- build:css css/main.css -->
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/index.css">
         <!-- endbuild -->
         <!-- endsmoosh -->
-
+        <script language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+        <script>
+        $(document).ready(function(){
+            var email,pass;
+            $("#submit").click(function(){
+                email=$("#input").val();
+                /*
+                * Perform some validation here.
+                */
+                $.post("/submit",{email:email},function(data){
+                    console.log('data: ' + data);     
+                    if(data==='done')           
+                    {
+                        window.location.href="/";
+                    }
+                });
+            });
+        });
+        </script>
     </head>
     <body>
-        hihihihihihihihihihi
-        <script src="//localhost:35729/livereload.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-          var socket = io.connect();
-          socket.on('news', function (data) {
-            console.log(data);
-            socket.emit('my other event', { my: 'data' });
-          });
-        </script>
+        <div class="main-container">
+            <h1 class="hello">Hello</h1>
+            <p class="question">Are you there?</p>
+            <input id="input" type="text"></input>
+            <button type="submit" id="submit">Click</button>
+            <div id="sketch-container" class="sketch-container"></div>
+        </div>
+        <script language="javascript" type="text/javascript" src="js/main.js"></script>
     </body>
 </html>

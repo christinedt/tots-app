@@ -1,0 +1,64 @@
+html,
+body {
+	background-color: #000;
+	color: #bac;
+	font-family: monospace;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	width: 100%;
+}
+
+/*Welcome page*/
+.hello {
+	animation-delay: 1.5s;
+	animation-duration: 3s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: 1;
+	animation-name: slidein;
+	color: #fff;
+	font-size: 72px;
+	font-weight: 300;
+	margin: 0;
+	opacity: 0;
+	padding-top: 3em;
+	text-align: center;
+}
+
+@keyframes slidein {
+	0% {
+		opacity: 0;
+		padding-top: 3em;
+	}
+	100% {
+		opacity: 0.75;
+		padding-top: 2em;
+	}
+}
+
+.question {
+	animation-delay: 1.5s;
+	animation-duration: 3s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: 1;
+	animation-name: slidein;
+	color: #fff;
+	font-size: 24px;
+	font-weight: 300;
+	margin: 0;
+	opacity: 0;
+	padding-top: 3em;
+	text-align: center;
+}
+
+@keyframes slidein {
+	0% {
+		opacity: 0;
+		padding-top: 3em;
+	}
+	100% {
+		opacity: 0.75;
+		padding-top: 2em;
+	}
+}

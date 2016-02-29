@@ -68,9 +68,9 @@ function setup() {
 }
 
 function draw() {
-  // background(backgroundSlider.value());
+  background(backgroundSlider.value());
 
-  // TotsUno.runTots(sliderOptions);
+  TotsUno.runTots(sliderOptions);
 }
 
 function setSliderOptions(e) {
