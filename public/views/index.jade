@@ -1,0 +1,39 @@
+doctype html
+html(lang="en-us")
+    head
+        meta(charset="utf-8")
+        title Social Explorer
+        meta(name="description", content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.")
+        meta(name="viewport", content="width=device-width, initial-scale=1")
+        link(rel="apple-touch-icon", href="apple-touch-icon.png")
+        link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,700")
+
+        link(rel="stylesheet" href="/css/index.css")
+        script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
+        script(type='text/javascript').
+            $(document).ready(function(){
+                var hue;
+                $("#submit").click(function(){
+                    hue = $("#inputHue").val();
+                    confidence = $("#inputConfidence").val();
+                    /*
+                    * Perform some validation here.
+                    */
+                    $.post("/",{hue:hue, confidence:confidence},function(data){
+                        console.log('data: ' + data);     
+                        if(data==='done'){
+                            window.location.href="/sketch";
+                        }
+                    });
+                });
+            });
+    body
+        div(class="main-container")
+            h1(class="hello") Hello
+            div(class="form-container")
+                label(for="inputHue") Hue
+                input(id="inputHue" name="inputHue" type="text")
+                label(for="inputConfidence") Confidence
+                input(id="inputConfidence" name="inputConfidence" type="text")
+                button(type="submit" id="submit") Click
+            div(id="sketch-container" class="sketch-container")

@@ -1,0 +1,39 @@
+
+<!doctype html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <title>Social Explorer</title>
+        <meta name="description" content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,700">
+
+        <!-- smoosh -->
+        <!-- build:css css/main.css -->
+        <link rel="stylesheet" href="/css/index.css">
+        <!-- endbuild -->
+        <!-- endsmoosh -->
+        <script language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+        <% var thisTitle = title %>
+        <script>
+        $(document).ready(function(){
+            console.log(thisTitle);
+        });
+        </script>
+    </head>
+    <body>
+        <div class="main-container">
+            <h1 class="hello">Sketch</h1>
+                 <h2><%= title %></h2>
+            <div class="form-container">
+                <label for="inputHue">Hue</label>
+                <input id="input" name="inputHue" type="text"></input>
+                <label for="inputConfidence">Confidence</label>
+                <input id="input" name="inputConfidence" type="text"></input>
+                <button type="submit" id="submit">Click</button>
+            </div>
+            <div id="sketch-container" class="sketch-container"></div>
+        </div>
+    </body>
+</html>

@@ -52,5 +52,10 @@ body {
   100% {
     opacity: 0.75;
     padding-top: 2em; } }
+.form-container {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  width: 40%; }
 
 /*# sourceMappingURL=index.css.map */

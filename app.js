@@ -1,5 +1,7 @@
 // set variables for the environment
 var express = require('express'),
+    ejs = require('ejs'),
+    jade = require('jade'),
     app = express(),
     session =require('express-session'),
     server = require('http').Server(app),
@@ -20,7 +22,7 @@ function appInit() {
   //views directory for all template files
   app.set('port', (process.env.PORT || 4000));
   app.set('views', path.join(publicDir, '/views'));
-  app.set('view engine', 'ejs');
+  app.set('view engine', 'jade');
   app.set('view options', { basedir: process.env.__dirname});
 
   //
@@ -38,12 +40,18 @@ function appInit() {
     res.render('index');
   });
 
-  app.post('/submit',function(req,res){
+  app.post('/',function(req,res){
     sess=req.session;
     //In this we are assigning email to sess.email variable.
     //email comes from HTML page.
-    sess.email=req.body.email;
-    res.end(sess.email);
+    sess.hue=req.body.hue;
+    sess.confidence=req.body.confidence;
+    res.end("done");
+  });
+
+  app.get('/sketch', function(req, res) {
+    sess = req.session;
+    res.render('sketch', {title: "SKETCH", session: sess});
   });
 
   // Set server port
