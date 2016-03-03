@@ -3,7 +3,7 @@ function TotSystem(options) {
   var tots = [],
       totRunOptions = {},
       totOptions = {
-        totSize: options.totSize
+        totSize: 6
       },
       mouseClickVector,
       activeTot;
@@ -36,7 +36,7 @@ function TotSystem(options) {
   this.setTotRunOptions = function(sliderOptions) {
     var tempFieldSize;
 
-    tempFieldSize = 800 - 42 * (sliderOptions.totAmount - 2);
+    tempFieldSize = 1000 - 35 * (sliderOptions.totAmount - 2);
     totRunOptions.forceValue = sliderOptions.forceValue;
     totRunOptions.activeTotMode = sliderOptions.activeTotMode;
     totRunOptions.isPassThrough = sliderOptions.isPassThrough;

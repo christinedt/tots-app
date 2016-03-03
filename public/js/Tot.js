@@ -7,7 +7,7 @@ function Tot(totOptions) {
   totView.options = {
     'runInterference': true,
     'runTot': true,
-    'displayTot': true,
+    'displayTot': false,
     'activeTotMode': false,
     'wallMode': 'passThrough',
     'socialMode': 'pairing',
@@ -26,7 +26,8 @@ function Tot(totOptions) {
       driveForce = createVector(0, 0),
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
-      tempYPos = Math.floor(Math.random() * (height-size) + size/2);
+      tempYPos = Math.floor(Math.random() * (height-size) + size/2),
+      previousTotOptions = {};
 
   totView.isActiveTot = false;
   totView.size = size;
@@ -37,17 +38,24 @@ function Tot(totOptions) {
   totView.velocity = p5.Vector.random2D().mult(4);
   totView.acceleration = createVector(0, 0);
   totView.forces = [];
+
   
   //totView.run(bills)
-  //Operates the Tot, passing it the list of other Tots (as bills)
+  //This is the function that runs every draw cycle. Controls
+  //basic operation of the tot's various components
   totView.run = function(bills, totRunOptions) {
-    totView.setVariables(totRunOptions);
+    if(totRunOptions !== previousTotOptions){
+      totView.setVariables(totRunOptions);
+    }
     totView.update(bills);
     totView.display();
     totView.reset();
+
+    previousTotOptions = totRunOptions;
   }
 
   totView.setVariables = function(totRunOptions) {
+    console.log('SETTIN VARIABLES');
     pushForce = totRunOptions.forceValue;
     activeTotMode = totRunOptions.activeTotMode;
     isPassThrough = totRunOptions.isPassThrough;
@@ -81,7 +89,6 @@ function Tot(totOptions) {
     totView.forces.forEach(totView.addForce);
     totView.velocity.add(totView.acceleration.x, totView.acceleration.y);
     totView.velocity.limit(7);
-    console.log(totView.velocity.heading());
     totView.position.add(totView.velocity.x, totView.velocity.y);
     if(isPassThrough){
       totView.passThrough();
@@ -142,7 +149,9 @@ function Tot(totOptions) {
     if(activeTotMode && totView.isActiveTot){
       totView.renderField();
     }
-    totView.renderTot();
+    if(totView.options.displayTot){
+      totView.renderTot();
+    }
   }
   
   totView.runInterference = function(bill, index, bills) {
@@ -260,25 +269,22 @@ function Tot(totOptions) {
     }
 
     var theta = totView.velocity.heading() + radians(90);
-
     push();
 
     translate(totView.position.x,totView.position.y);
 
     rotate(theta);
 
-    beginShape(TRIANGLES);
+    beginShape();
 
     vertex(0, -size*2);
-
     vertex(-size, size*2);
-
+    vertex(0, size);
     vertex(size, size*2);
 
     endShape();
 
     pop();
-    ellipse(totView.position.x, totView.position.y, size, size);
   }
   
   totView.renderIntersectShape = function(intersections, distance, otherHue, i) {
@@ -298,7 +304,7 @@ function Tot(totOptions) {
         
     
     //Dots
-    var dotSize = 3;
+    var dotSize = 2;
     noStroke();
 
     for (var i = dotSize; i > 0; i--){

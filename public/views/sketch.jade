@@ -9,23 +9,83 @@ html(lang="en-us")
         link(rel="apple-touch-icon" href="apple-touch-icon.png")
         link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,700")
 
-        link(rel="stylesheet", href="/css/index.css")
-        script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
-        script(type='text/javascript').
-            $(document).ready(function(){
-            });
-        script(type='text/javascript'). 
-            var session = !{JSON.stringify(session)};
-            console.log(session.hue, session.confidence);
+        link(rel="stylesheet", href="/css/style.css")
+        script( language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js")
+        script(language="javascript" type="text/javascript").
+            var thisIsAVariable = "#{session.hue}";
+        script( language="javascript" type="text/javascript" src="js/p5.js")
+        script( language="javascript" type="text/javascript" src="js/p5.dom.js")
+        script( language="javascript" type="text/javascript" src="js/equations.js")
+        script( language="javascript" type="text/javascript" src="js/Tot.js")
+        script( language="javascript" type="text/javascript" src="js/TotSystem.js")
+        script(type='text/javascript' src="js/sketch.js")
     body
+        div( class="side-bar")
+            div( class="side-bar-header")
+                h1( class="header") Basic Tots
+            div( id="control-panel" class="control-panel")
+                ul
+                    li( class="tier-1-menu-item")
+                        label( for="space-menu-toggle" class="tier-1-label") Space
+                        input( id="space-menu-toggle" name="space-menu-toggle" type="checkbox" class="")
+                        div( class="tier-2-control-panel space")
+                            ul
+                                li( class="tier-2-control switch item")
+                                    h3( class="control-header") Boundaries
+                                    div( class="switch-label")
+                                        span( class="label-contents")
+                                            img( class="label-image" src="img/bounce-icon.png")
+                                    div( id="bounce-slider" class="switch-container")
+                                    div( class="switch-label")
+                                        span( class="label-contents")
+                                            img( class="label-image" src="img/portal-icon.png")
+                                li( class="tier-2-control item")
+                                    h3( class="control-header") Background
+                                    div( class="control-label")
+                                        span( class="label-contents") Dark
+                                    div( id="background-slider" class="slider-container")
+                                    div( class="control-label")
+                                        span( class="label-contents") Light
+                    li( class="tier-1-menu-item")
+                        label( for="social-menu-toggle" class="tier-1-label") Social
+                        input( id="social-menu-toggle" name="social-menu-toggle" type="checkbox" class="")
+                        div( class="tier-2-control-panel social")
+                            ul
+                                li( class="tier-2-control item")
+                                    h3( class="control-header") Crowded
+                                    div( class="control-label")
+                                        span( class="label-contents") Sparse
+                                    div( id="tot-slider" class="slider-container")
+                                    div( class="control-label")
+                                        span( class="label-contents") Dense
+                                li( class="tier-2-control switch item")
+                                    h3( class="control-header") Social Behavior
+                                    div( class="switch-label")
+                                        span( class="label-contents") Grouping
+                                    div( id="pair-slider" class="switch-container")
+                                    div(class="switch-label")
+                                        span( class="label-contents") Pairing
+                                li( class="tier-2-control item")
+                                    h3( class="control-header") Personality
+                                    div( class="control-label")
+                                        span( class="label-contents") Conform
+                                    div( id="diversity-slider" class="slider-container")
+                                    div( class="control-label")
+                                        span( class="label-contents") Express
+                    li( class="tier-1-menu-item")
+                        label( for="self-menu-toggle" class="tier-1-label") Self
+                        input( id="self-menu-toggle" name="self-menu-toggle" type="checkbox" class="")
+                        div( class="tier-2-control-panel self")
+                            ul
+                                li( id="active-tot-container" class="tier-2-control item active-tot")
+                                    div( class="button-label")
+                                        span( class="label-contents") Protagonist Mode is
+                                    div( id="active-tot-button" class="button-container")
+                                li( class="active-tot tier-2-control tip")
+                                    p( class="control-tip-copy") 
+                                        em Click one to designate a protagonist. Use arrow keys to steer.
         div(class="main-container")
-            h1(class="hello") Sketch
-            p= session.hue
-            p= session.confidence
-            div(class="form-container")
-                label(for="inputHue") Hue
-                input(id="input" name="inputHue" type="text")
-                label(for="inputConfidence" Confidence)
-                input(id="input" name="inputConfidence" type="text")
-                button(type="submit" id="submit") Click
-            div(id="sketch-container" class="sketch-container") 
+            //- h1(class="hello") Sketch
+            //- p= session.hue
+            //- p= session.confidence
+            div(id="sketch-container" class="sketch-container")

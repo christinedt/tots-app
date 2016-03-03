@@ -8,15 +8,15 @@ var TotsUno,
     sliderOptions = {};
 
 function setup() {
-  socket = io.connect('https://boiling-escarpment-82743.herokuapp.com/');
-  socket.on('mouse',
-    function(data) {
-      // Draw a blue circle
-      fill(0,0,255);
-      noStroke();
-      ellipse(data.x,data.y,80,80);
-    }
-  );
+  // socket = io.connect('https://boiling-escarpment-82743.herokuapp.com/');
+  // socket.on('mouse',
+  //   function(data) {
+  //     // Draw a blue circle
+  //     fill(0,0,255);
+  //     noStroke();
+  //     ellipse(data.x,data.y,80,80);
+  //   }
+  // );
 
   sketch = createCanvas(windowWidth, windowHeight)
     .parent("sketch-container");
@@ -56,7 +56,7 @@ function setup() {
   frameRate(10);
 
   options = {
-    totSize: 10
+    hue: 10
   };
   TotsUno = new TotSystem(options);
   setSliderOptions();
@@ -68,7 +68,7 @@ function setup() {
 }
 
 function draw() {
-  background(backgroundSlider.value());
+  // background(backgroundSlider.value(), 5);
 
   TotsUno.runTots(sliderOptions);
 }
@@ -109,15 +109,15 @@ function mousePressed() {
   }
 }
 
-function mouseDragged() {
-  // Make a little object with mouseX and mouseY
-  var data = {
-    x: mouseX,
-    y: mouseY
-  };
-  // Send that object to the socket
-  socket.emit('mouse',data);
-}
+// function mouseDragged() {
+//   // Make a little object with mouseX and mouseY
+//   var data = {
+//     x: mouseX,
+//     y: mouseY
+//   };
+//   // Send that object to the socket
+//   socket.emit('mouse',data);
+// }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
