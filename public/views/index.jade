@@ -6,7 +6,7 @@ html(lang="en-us")
         meta(name="description", content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.")
         meta(name="viewport", content="width=device-width, initial-scale=1")
         link(rel="apple-touch-icon", href="apple-touch-icon.png")
-        link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,700")
+        link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css')
 
         link(rel="stylesheet" href="/css/index.css")
         script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
@@ -31,11 +31,11 @@ html(lang="en-us")
         div(class="main-container")
             h1(class="hello") Hello
             div(class="form-container")
-                label(for="inputHue") Hue
-                input(id="inputHue" name="inputHue" type="text")
-                label(for="inputConfidence") Confidence
-                input(id="inputConfidence" name="inputConfidence" type="text")
-                label(for="inputConfidence") Sensitivity
-                input(id="inputConfidence" name="inputConfidence" type="text")
-                button(type="submit" id="submit") Click
+                label(class="form-label" for="inputHue") Hue
+                input(class="form-input" id="inputHue" name="inputHue" type="text")
+                label(class="form-label" for="inputConfidence") Confidence
+                input(class="form-input" id="inputConfidence" name="inputConfidence" type="text")
+                label(class="form-label" for="inputConfidence") Sensitivity
+                input(class="form-input" id="inputConfidence" name="inputConfidence" type="text")
+                button(class="form-button" type="submit" id="submit") Continue 
             div(id="sketch-container" class="sketch-container")

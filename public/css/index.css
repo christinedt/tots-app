@@ -2,9 +2,11 @@ html,
 body {
   background-color: #000;
   color: #bac;
-  font-family: monospace;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-weight: 200;
   height: 100%;
   margin: 0;
+  text-transform: uppercase;
   padding: 0;
   position: relative;
   width: 100%; }
@@ -29,7 +31,7 @@ body {
     opacity: 0;
     padding-top: 3em; }
   100% {
-    opacity: 0.75;
+    opacity: 1;
     padding-top: 2em; } }
 .question {
   animation-delay: 1.5s;
@@ -45,17 +47,38 @@ body {
   padding-top: 3em;
   text-align: center; }
 
-@keyframes slidein {
-  0% {
-    opacity: 0;
-    padding-top: 3em; }
-  100% {
-    opacity: 0.75;
-    padding-top: 2em; } }
 .form-container {
+  animation-delay: 2s;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-name: slidein;
   display: block;
   margin: 0 auto;
+  opacity: 0;
+  padding-top: 3em;
   text-align: center;
   width: 40%; }
+  .form-container .form-label,
+  .form-container .form-input {
+    display: block; }
+
+.form-label {
+  line-height: 1.75em; }
+
+.form-input {
+  margin: 0 auto 1em; }
+
+.form-button {
+  background-color: #bac;
+  border: none;
+  color: #fff;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-size: 16px;
+  margin-top: 1em;
+  padding: 10px 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100px; }
 
 /*# sourceMappingURL=index.css.map */

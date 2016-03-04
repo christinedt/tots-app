@@ -7,12 +7,14 @@ function Tot(totOptions) {
   totView.options = {
     'runInterference': true,
     'runTot': true,
-    'displayTot': false,
+    'displayTot': true,
+    'displayTotGaze': true,
     'activeTotMode': false,
     'wallMode': 'passThrough',
     'socialMode': 'pairing',
     'diversityValue': false
   };
+
   var doRunInterference = true,
       activeTotMode,
       isPassThrough,
@@ -44,18 +46,13 @@ function Tot(totOptions) {
   //This is the function that runs every draw cycle. Controls
   //basic operation of the tot's various components
   totView.run = function(bills, totRunOptions) {
-    if(totRunOptions !== previousTotOptions){
-      totView.setVariables(totRunOptions);
-    }
+    totView.setVariables(totRunOptions);
     totView.update(bills);
     totView.display();
     totView.reset();
-
-    previousTotOptions = totRunOptions;
   }
 
   totView.setVariables = function(totRunOptions) {
-    console.log('SETTIN VARIABLES');
     pushForce = totRunOptions.forceValue;
     activeTotMode = totRunOptions.activeTotMode;
     isPassThrough = totRunOptions.isPassThrough;
@@ -90,7 +87,7 @@ function Tot(totOptions) {
     totView.velocity.add(totView.acceleration.x, totView.acceleration.y);
     totView.velocity.limit(7);
     totView.position.add(totView.velocity.x, totView.velocity.y);
-    if(isPassThrough){
+    if(isPassThrough === 1){
       totView.passThrough();
     } else {
       totView.checkForWalls();
@@ -151,6 +148,9 @@ function Tot(totOptions) {
     }
     if(totView.options.displayTot){
       totView.renderTot();
+    }
+    if(totView.options.displayTotGaze){
+      totView.renderTotGaze();
     }
   }
   
@@ -269,6 +269,9 @@ function Tot(totOptions) {
     }
 
     var theta = totView.velocity.heading() + radians(90);
+
+    // ellipse(totView.position.x,totView.position.y, size, size);
+
     push();
 
     translate(totView.position.x,totView.position.y);
@@ -395,6 +398,10 @@ function Tot(totOptions) {
     strokeWeight(2);
     stroke(0, 0, 0);
     ellipse(totView.position.x, totView.position.y, 2*shapeSize, 2*shapeSize);
+  }
+
+  totView.renderTotGaze = function(){
+    return;
   }
   
   totView.renderField = function() {

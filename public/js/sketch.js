@@ -37,6 +37,11 @@ function setup() {
     .class("control-input")
     .id("diversity-control");
   
+  sensitivitySlider = createSlider(5, 30, 10)
+    .parent("sensitivity-slider")
+    .class("control-input")
+    .id("sensitivity-control");
+  
   bounceSlider = createSlider(0, 1, 1)
     .parent("bounce-slider")
     .class("control-input switch")
@@ -62,23 +67,32 @@ function setup() {
   setSliderOptions();
 
 
-  $('input').on('change', function(e){
+  $('.control-input').on('change', function(e){
     setSliderOptions(e);
+  });
+
+  $('#bounce-control').on('change', function(e){
+    var hello = $('#' + e.currentTarget.id);
+    console.log(bounceSlider.value());
   });
 }
 
 function draw() {
-  // background(backgroundSlider.value(), 5);
+  background(backgroundSlider.value(), 25);
 
   TotsUno.runTots(sliderOptions);
 }
 
 function setSliderOptions(e) {
+  if(e){
+    console.log(e.currentTarget.id);
+  }
   sliderOptions.totAmount = totSlider.value();
   sliderOptions.activeTotMode = isActiveTotMode;
   sliderOptions.isPassThrough = bounceSlider.value();
   sliderOptions.isPairing = pairSlider.value();
   sliderOptions.diversityValue = diversitySlider.value();
+  sliderOptions.sensitivityValue = sensitivitySlider.value();
 }
 
 function toggleActiveTotMode() {
