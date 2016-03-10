@@ -6,36 +6,22 @@ html(lang="en-us")
         meta(name="description", content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.")
         meta(name="viewport", content="width=device-width, initial-scale=1")
         link(rel="apple-touch-icon", href="apple-touch-icon.png")
-        link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css')
+        link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300,700' rel='stylesheet' type='text/css')
 
         link(rel="stylesheet" href="/css/index.css")
         script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
-        script(type='text/javascript').
-            $(document).ready(function(){
-                var hue;
-                $("#submit").click(function(){
-                    hue = $("#inputHue").val();
-                    confidence = $("#inputConfidence").val();
-                    /*
-                    * Perform some validation here.
-                    */
-                    $.post("/",{hue:hue, confidence:confidence},function(data){
-                        console.log('data: ' + data);     
-                        if(data==='done'){
-                            window.location.href="/sketch";
-                        }
-                    });
-                });
-            });
+        script(type='text/javascript' src="js/main.js")
     body
         div(class="main-container")
             h1(class="hello") Hello
             div(class="form-container")
-                label(class="form-label" for="inputHue") Hue
-                input(class="form-input" id="inputHue" name="inputHue" type="text")
+                label(class="form-label" for="inputHue") Personality
+                input(class="form-input hue" type="range" min="0" max="360" id="inputHue" name="inputHue")
                 label(class="form-label" for="inputConfidence") Confidence
-                input(class="form-input" id="inputConfidence" name="inputConfidence" type="text")
-                label(class="form-label" for="inputConfidence") Sensitivity
-                input(class="form-input" id="inputConfidence" name="inputConfidence" type="text")
+                input(class="form-input" id="inputConfidence" min="0" max="100" name="inputConfidence" type="range")
+                label(class="form-label" for="inputSensitivity") Sensitivity
+                input(class="form-input" id="inputSensitivity" min="0" max="100" name="inputConfidence" type="range")
+                label(class="form-label" for="inputSociability") Sociability
+                input(class="form-input" id="inputSociability" min="0" max="100" name="inputConfidence" type="range")
                 button(class="form-button" type="submit" id="submit") Continue 
             div(id="sketch-container" class="sketch-container")

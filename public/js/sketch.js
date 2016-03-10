@@ -18,10 +18,10 @@ function setup() {
   //   }
   // );
 
-  sketch = createCanvas(windowWidth, windowHeight)
+  sketch = createCanvas(window.innerWidth, window.innerHeight, 'p2d')
     .parent("sketch-container");
 
-  activeTotButton = createButton('OFF', true)
+  activeTotButton = createButton('NO', true)
     .parent("active-tot-button")
     .class("button-input")
     .id("active-tot-control")
@@ -57,7 +57,7 @@ function setup() {
     .class("control-input")
     .id("background-control");
 
-  colorMode(HSB);
+  colorMode(HSB, 255);
   frameRate(10);
 
   options = {
@@ -69,11 +69,6 @@ function setup() {
 
   $('.control-input').on('change', function(e){
     setSliderOptions(e);
-  });
-
-  $('#bounce-control').on('change', function(e){
-    var hello = $('#' + e.currentTarget.id);
-    console.log(bounceSlider.value());
   });
 }
 
@@ -103,10 +98,10 @@ function toggleActiveTotMode() {
   $activeTotContainer.toggleClass('on');
 
   if(isActiveTotMode){
-    activeTotButton.html('ON');
+    activeTotButton.html('YES');
     activeTotButton.addClass('on');    
   } else {
-    activeTotButton.html('OFF');
+    activeTotButton.html('NO');
     activeTotButton.removeClass('on');
   }
 
@@ -134,5 +129,5 @@ function mousePressed() {
 // }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(window.innerWidth, window.innerHeight);
 }

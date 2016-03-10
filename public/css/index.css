@@ -64,7 +64,8 @@ body {
     display: block; }
 
 .form-label {
-  line-height: 1.75em; }
+  line-height: 1.75em;
+  padding-bottom: 5px; }
 
 .form-input {
   margin: 0 auto 1em; }
@@ -80,5 +81,12 @@ body {
   text-align: center;
   text-transform: uppercase;
   width: 100px; }
+
+input[type='range'].hue {
+  -webkit-appearance: none;
+  background-color: cyan;
+  border-radius: 10px; }
+  input[type='range'].hue:focus {
+    outline: none; }
 
 /*# sourceMappingURL=index.css.map */

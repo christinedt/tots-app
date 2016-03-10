@@ -3,7 +3,7 @@ function TotSystem(options) {
   var tots = [],
       totRunOptions = {},
       totOptions = {
-        totSize: 6
+        totSize: 10
       },
       mouseClickVector,
       activeTot;

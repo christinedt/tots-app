@@ -26,7 +26,11 @@ function appInit() {
   app.set('view options', { basedir: process.env.__dirname});
 
   //
-  app.use(session({secret: 'ssshhhhh'}));
+  app.use(function(req,res,next){
+      res.locals.session = req.session;
+      next();
+  });
+  app.use(session({resave: true, saveUninitialized: false, secret: 'SOMERANDOMSECRETHERE', cookie: { maxAge: 6000000000 }}));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
 
@@ -40,18 +44,38 @@ function appInit() {
     res.render('index');
   });
 
-  app.post('/',function(req,res){
-    sess=req.session;
+  app.post('/load',function(req,res){
+    sess = req.session;
     //In this we are assigning email to sess.email variable.
     //email comes from HTML page.
-    sess.hue=req.body.hue;
-    sess.confidence=req.body.confidence;
-    res.end("done");
+    sess.selfTotSettings = req.body.selfTotSettings;
+    res.end('done');
   });
 
   app.get('/sketch', function(req, res) {
     sess = req.session;
-    res.render('sketch', {title: "SKETCH", session: sess});
+    console.log('sketch: ', sess);
+    res.render('sketch', {title: "SKETCH"});
+  });
+
+  app.get('/sketch-json', function(req, res) {
+    sess = req.session;
+    console.log(req.params);
+  });
+
+  app.post('/update_sketch', function(req, res) {
+    sess = req.session;
+    console.log(req.body);
+  });
+
+  app.get('/hello', function(req, res) {
+    sess = req.session;
+    res.render('sketch', {title: "HELLO", session: sess});
+  });
+
+  app.get('/section-1', function(req, res) {
+    sess = req.session;
+    res.render('sketch', {title: "Section 1", session: sess});
   });
 
   // Set server port

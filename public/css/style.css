@@ -1,19 +1,27 @@
-html,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%; }
+
 body {
   background-color: #000;
-  color: #bac;
+  color: #fff;
   font-family: 'Yanone Kaffeesatz', sans-serif;
-  font-weight: 200;
+  font-weight: 300;
   height: 100%;
   margin: 0;
   padding: 0;
   position: relative;
-  text-transform: uppercase;
   width: 100%; }
 
 /*MAIN CONTAINER*/
 .main-container {
   display: block;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: hidden;
   position: relative;
   width: 100%; }
 
@@ -28,48 +36,43 @@ body {
 .side-bar {
   background: transparent;
   display: block;
-  overflow: auto;
+  height: 100%;
+  opacity: 0.4;
+  overflow: hidden;
   position: fixed;
-  width: 325px;
+  width: 250px;
   z-index: 2;
   -webkit-transition: 0.5s;
   transition: 0.5s; }
+  .side-bar:hover {
+    background: #41356c;
+    opacity: 0.8; }
+    .side-bar:hover .side-bar-header {
+      background-color: #1f175c; }
+    .side-bar:hover .tier-1-label {
+      background-color: #281f6c; }
 
 .side-bar-header {
   background: transparent;
-  opacity: 0.5;
+  cursor: pointer;
+  opacity: 1;
+  position: fixed;
+  width: 250px;
   -webkit-transition: 0.5s;
   transition: 0.5s; }
 
 .header {
   display: block;
-  font-size: 2em;
-  font-weight: 200;
+  font-size: 24px;
+  font-weight: 300;
   line-height: 60px;
   margin: 0;
   padding: 0 15px;
   position: relative;
   text-align: center;
+  text-transform: uppercase;
   -webkit-transition: 0.5s;
   transition: 0.5s; }
-
-.menu-label {
-  background-image: url("../img/gear.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 30px 30px;
-  cursor: pointer;
-  display: block;
-  float: left;
-  height: 30px;
-  padding: 15px;
-  width: 30px;
-  -webkit-transition: 0.5s;
-  transition: 0.5s; }
-
-.side-bar:hover .side-bar-header {
-  background: #324;
-  opacity: 1; }
 
 input[type=checkbox] {
   position: absolute;
@@ -77,68 +80,61 @@ input[type=checkbox] {
   left: -9999px; }
 
 /*TIER 1 MENU*/
-.control-panel {
-  background: transparent;
+ul.control-panel {
   clear: both;
-  display: block;
+  display: inline-block;
+  font-weight: 300;
+  height: 100%;
   overflow: auto;
-  position: relative;
-  width: 100%;
+  position: absolute;
+  top: 60px;
+  width: 250px;
   z-index: 2;
   -webkit-transition: 0.5s;
-  transition: 0.5s; }
-
-.control-panel ul {
+  transition: 0.5s;
   list-style-type: none;
   margin: 0;
   padding: 0;
   position: relative; }
 
 .tier-1-menu-item {
-  background: #435;
   display: block;
-  height: 0;
   opacity: 0.6;
-  overflow: hidden;
   -webkit-transition: 0.5s;
   transition: 0.5s; }
 
-.side-bar:hover .tier-1-menu-item {
-  height: auto; }
-
-.side-bar:hover .tier-1-menu-item:hover {
-  opacity: 0.85; }
-
 .tier-1-label {
+  clear: both;
   cursor: pointer;
   display: block;
-  font-size: 1.5em;
-  font-weight: 200;
-  height: 0;
-  line-height: 1.8em;
-  overflow: hidden;
-  text-align: center;
+  font-size: 18px;
+  padding: 10px;
+  text-align: left;
+  text-transform: uppercase;
   vertical-align: middle;
   width: 100%;
   -webkit-transition: 0.3s;
   transition: 0.3s; }
 
-.side-bar:hover .tier-1-label {
-  height: 1.8em; }
+#space-menu-toggle:checked ~ .tier-2-control-panel,
+#display-menu-toggle:checked ~ .tier-2-control-panel,
+#social-menu-toggle:checked ~ .tier-2-control-panel,
+#self-menu-toggle:checked ~ .tier-2-control-panel {
+  max-height: 400px; }
 
 /*TIER 2 MENU*/
-.tier-2-control-panel {
-  background: #546;
+ul.tier-2-control-panel {
   display: block;
-  height: auto;
+  list-style-type: none;
+  margin: 0;
+  max-height: 0;
   overflow: hidden;
-  visibility: hidden;
+  padding: 0;
   -webkit-transition: 0.5s;
   transition: 0.5s; }
 
 .tier-2-control {
   display: block;
-  height: 0;
   margin: 0;
   overflow: hidden;
   padding: 0;
@@ -146,9 +142,7 @@ input[type=checkbox] {
   transition: 0.5s; }
 
 .tier-2-control.tip {
-  background: #879;
   font-size: 0.75em;
-  height: 0;
   padding: 0;
   text-align: center;
   z-index: 3;
@@ -157,29 +151,15 @@ input[type=checkbox] {
 
 .control-header {
   display: block;
+  font-size: 16px;
   margin: 0;
-  padding: 0;
+  padding: 5px 0;
   text-align: center;
   width: 100%; }
-
-.side-bar:hover #space-menu-toggle:checked ~ .tier-2-control-panel,
-.side-bar:hover #social-menu-toggle:checked ~ .tier-2-control-panel,
-.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel {
-  visibility: visible; }
-
-.side-bar:hover #space-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item,
-.side-bar:hover #social-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item,
-.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item {
-  height: 70px;
-  visibility: visible; }
 
 .control-tip-copy {
   display: block;
   margin: 0; }
-
-.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.active-bob.on ~ .tier-2-control.tip.active-bob {
-  height: 30px;
-  padding: 10px; }
 
 .control-input {
   display: block;
@@ -198,8 +178,6 @@ input[type=checkbox] {
   color: #fff;
   display: block;
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
   width: 80%; }
 
 .button-input.on {
@@ -260,9 +238,7 @@ input[type=checkbox] {
 .label-contents {
   display: block;
   margin: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%); }
+  position: relative; }
 
 /* NEW STUFF */
 input[type=range] {
@@ -273,8 +249,6 @@ input[type=range] {
   height: 7px;
   margin: auto;
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
   border: 1px solid #bdc3c7;
   background-color: #fff;
   width: 100%; }
@@ -282,9 +256,9 @@ input[type=range] {
 input[type=range].switch {
   background-color: #fff;
   border: 1px solid #bdc3c7;
-  border-radius: 15px;
-  height: 30px;
-  width: 60px; }
+  border-radius: 10px;
+  height: 20px;
+  width: 40px; }
 
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -295,10 +269,20 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 10px;
   cursor: pointer; }
 
+input[type='range'].hue.change::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background-color: attr(data-hue); }
+
 input[type='range'].switch::-webkit-slider-thumb {
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
   cursor: pointer; }
+
+.next-button {
+  position: absolute;
+  right: 50%;
+  top: 0;
+  z-index: 4; }
 
 /*# sourceMappingURL=style.css.map */

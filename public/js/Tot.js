@@ -228,30 +228,43 @@ function Tot(totOptions) {
       totView.renderIntersectShape(intersections, distance, otherTot.hue, i);
     }
 
+    // hueGap returns the value that is half the distance between thisHue and otherTot.hue
+    // Value will be 0 - 63.75
+
     hueDifference = totView.getHueGap(thisTot.hue, otherTot.hue);
 
+
+    //pushForce will be 0.68 to -0.313
     if(isPairing) {
       pushForce = (43.75 - hueDifference)/63.75;
     } else {
       pushForce = (hueDifference - 20)/63.75;
     }
+      
 
-    diversityFactor = map(diversityValue, 0, 255, 0, 63.75);
+    var diversityFactor = map(diversityValue, 0, 255, 0, 1);
 
+    // Adjust the pushForce by the amount that everyone is expressing
     pushForce *= diversityFactor;
 
-    pushForceFactor = pushForce / (i * j);
+    // Adjust the push force according to which field rings the force is
+    // coming from, a higher force for a closer ring
+    pushForce = pushForce / (i * j);
+
+    // Adjust pushForce by global push strength variable
+    pushForce *= 800;
 
     pushVector1 = p5.Vector.sub(thisTot.position, firstIntersectionPoint)
       .normalize()
-      .mult(pushForceFactor);
+      .mult(pushForce);
 
     pushVector2 = p5.Vector.sub(thisTot.position, secondIntersectionPoint)
       .normalize()
-      .mult(pushForceFactor);
+      .mult(pushForce);
 
     totView.forces.push(pushVector1);
     totView.forces.push(pushVector2);
+    // console.log(pushVector1, pushVector2);
   }
   
   totView.renderTot = function() {
@@ -270,24 +283,24 @@ function Tot(totOptions) {
 
     var theta = totView.velocity.heading() + radians(90);
 
-    // ellipse(totView.position.x,totView.position.y, size, size);
+    ellipse(totView.position.x,totView.position.y, size, size);
 
-    push();
+    // push();
 
-    translate(totView.position.x,totView.position.y);
+    // translate(totView.position.x,totView.position.y);
 
-    rotate(theta);
+    // rotate(theta);
 
-    beginShape();
+    // beginShape();
 
-    vertex(0, -size*2);
-    vertex(-size, size*2);
-    vertex(0, size);
-    vertex(size, size*2);
+    // vertex(0, -size*2);
+    // vertex(-size, size*2);
+    // vertex(0, size);
+    // vertex(size, size*2);
 
-    endShape();
+    // endShape();
 
-    pop();
+    // pop();
   }
   
   totView.renderIntersectShape = function(intersections, distance, otherHue, i) {
