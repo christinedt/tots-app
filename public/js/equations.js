@@ -26,7 +26,7 @@ function checkIntersect(x0, y0, r0, x1, y1, r1) {
   return doTheyIntersect;
 }
 
-function getIntersections(x0, y0, r0, x1, y1, r1) {
+function getIntersectionPoints(x0, y0, r0, x1, y1, r1) {
   var dx, dy, d, a, x2, y2, h, rx, ry, xi1, xi2, yi1, yi2,
       intersectionPoints = [];
   

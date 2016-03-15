@@ -27,32 +27,32 @@ function setup() {
     .id("active-tot-control")
     .mousePressed(toggleActiveTotMode);
   
-  totSlider = createSlider(2, 16, 2)
+  totSlider = createSlider(2, 16, sliderSettings.totSlider)
     .parent("tot-slider")
     .class("control-input")
     .id("tot-control");
   
-  diversitySlider = createSlider(20, 255, 100)
+  diversitySlider = createSlider(20, 255, sliderSettings.diversitySlider)
     .parent("diversity-slider")
     .class("control-input")
     .id("diversity-control");
   
-  sensitivitySlider = createSlider(5, 30, 10)
+  sensitivitySlider = createSlider(5, 30, sliderSettings.sensitivitySlider)
     .parent("sensitivity-slider")
     .class("control-input")
     .id("sensitivity-control");
   
-  bounceSlider = createSlider(0, 1, 1)
+  bounceSlider = createSlider(0, 1, sliderSettings.bounceSlider)
     .parent("bounce-slider")
     .class("control-input switch")
     .id("bounce-control");
   
-  pairSlider = createSlider(0, 1, 1)
+  pairSlider = createSlider(0, 1, sliderSettings.pairSlider)
     .parent("pair-slider")
     .class("control-input switch")
     .id("pair-control");
   
-  backgroundSlider = createSlider(0, 255, 10)
+  backgroundSlider = createSlider(0, 255, sliderSettings.backgroundSlider)
     .parent("background-slider")
     .class("control-input")
     .id("background-control");

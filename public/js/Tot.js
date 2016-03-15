@@ -5,6 +5,11 @@ function Tot(totOptions) {
   var totView = this;
 
   totView.options = {
+    'isSelfTot': totOptions.isSelfTot || false,
+    'personality': totOptions.personality || 125,
+    'confidence': totOptions.confidence || 125,
+    'sensitivity': totOptions.sensitivity || 125,
+    'sociability': totOptions.sociability || 125,
     'runInterference': true,
     'runTot': true,
     'displayTot': true,
@@ -21,8 +26,8 @@ function Tot(totOptions) {
       isPairing,
       diversityValue,
       fieldPulseRate = 1,
-      size = totOptions.totSize,
-      hue = Math.floor(Math.random() * 256),
+      size = 12,
+      hue = totOptions.personality || Math.floor(Math.random() * 256),
       fieldPulseFrame = 0,
       pushForce,
       driveForce = createVector(0, 0),
@@ -35,7 +40,7 @@ function Tot(totOptions) {
   totView.size = size;
   totView.radius = radius;
   totView.hue = hue;
-  totView.fieldRings = Math.floor(Math.random() * 15 + 5);
+  totView.fieldRings = Math.floor(Math.random() * 20 + 5);
   totView.position = createVector(tempXPos, tempYPos);
   totView.velocity = p5.Vector.random2D().mult(4);
   totView.acceleration = createVector(0, 0);
@@ -83,7 +88,11 @@ function Tot(totOptions) {
     if(totView.isActiveTot) {
       totView.driveTot();
     }
-    totView.forces.forEach(totView.addForce);
+
+    for(var i = 0; i < totView.forces.length; i++) {
+      totView.acceleration.add(totView.forces[i].x, totView.forces[i].y);
+    }
+
     totView.velocity.add(totView.acceleration.x, totView.acceleration.y);
     totView.velocity.limit(7);
     totView.position.add(totView.velocity.x, totView.velocity.y);
@@ -143,9 +152,9 @@ function Tot(totOptions) {
   //totView.display()
   //Runs the functions that create the visual appearance of the Tot, no params
   totView.display = function() {
-    if(activeTotMode && totView.isActiveTot){
-      totView.renderField();
-    }
+    // if(activeTotMode && totView.isActiveTot){
+    //   totView.renderField();
+    // }
     if(totView.options.displayTot){
       totView.renderTot();
     }
@@ -159,33 +168,84 @@ function Tot(totOptions) {
   		  otherTot = bill,
         distance = p5.Vector.dist(thisTot.position, otherTot.position),
         dVector = p5.Vector.sub(otherTot.position, thisTot.position),
-        dNormal = dVector.normalize();
+        dNormal = dVector.normalize(),
+        thisRing,
+        thatRing;
 
     fieldPulseFrame = fieldPulseFrame % totView.fieldIncrement;
     
     //if otherTot is not thisTot
     if(distance > 0) {
 
-
-
       //for each ring of thisTot's field
-      for(var i = fieldPulseFrame; i < thisTot.fieldRadius; i+=thisTot.fieldIncrement) {
+      for(var thisRing = fieldPulseFrame; thisRing < thisTot.fieldRadius; thisRing+=thisTot.fieldIncrement) {
         //for each ring of otherTot's field
-        for(var j = fieldPulseFrame; j < otherTot.fieldRadius; j+=otherTot.fieldIncrement) {
+        for(var thatRing = fieldPulseFrame; thatRing < otherTot.fieldRadius; thatRing+=otherTot.fieldIncrement) {
           //check if the two rings intersect
           var areIntersecting = checkIntersect(
                                   thisTot.position.x, 
                                   thisTot.position.y, 
-                                  i, 
+                                  thisRing, 
                                   otherTot.position.x, 
                                   otherTot.position.y, 
-                                  j
+                                  thatRing
                                 );
                                               
           switch(areIntersecting) {
           //fields intersect and have intersection points
             case 1:
-              totView.handleIntersection(thisTot, otherTot, distance, i, j);
+
+              var intersections,
+                  firstIntersectionPoint,
+                  secondIntersectionPoint,
+                  pushForce,
+                  pushVector1,
+                  pushVector2,
+                  hueDifference;
+
+              // Get intersection points
+
+              // getInterSectionPoints() lives in the equations file
+              // and returns an array of 4 floats, which are the 
+              // xy coordinates for the points at which
+              // thisRing intersects with thatRing
+              intersections = getIntersectionPoints(
+                                thisTot.position.x, 
+                                thisTot.position.y, 
+                                thisRing, 
+                                otherTot.position.x, 
+                                otherTot.position.y, 
+                                thatRing
+                              );
+
+              firstIntersectionPoint = createVector(intersections[0], intersections[1]);
+              secondIntersectionPoint = createVector(intersections[2], intersections[3]);
+
+              // calculate pushForce
+              pushForce = totView.calculatePushForce(thisTot, otherTot, distance, thisRing, thatRing);
+
+              pushVector1 = p5.Vector.sub(thisTot.position, firstIntersectionPoint)
+                .normalize()
+                .mult(pushForce);
+
+              pushVector2 = p5.Vector.sub(thisTot.position, secondIntersectionPoint)
+                .normalize()
+                .mult(pushForce);
+
+              totView.forces.push(pushVector1);
+              totView.forces.push(pushVector2);
+
+
+              // Render the intersection shape if you'd like to
+
+              // The intersection shape renders if it is not active tot mode, 
+              // if it is and this is the active tot, or if this is the self tot
+
+              // if(totView.isActiveTot) {
+              if(!activeTotMode || (activeTotMode && totView.isActiveTot) || totView.options.isSelfTot) {
+                totView.renderIntersectShape(intersections, distance, otherTot.hue, thisRing);
+              }
+
               break;
 
           //If one of the fields is contained in the other
@@ -198,35 +258,13 @@ function Tot(totOptions) {
           }
         }
       }
-
-
     }
   }
 
-  totView.handleIntersection = function(thisTot, otherTot, distance, i, j) {
-    var intersections,
-        firstIntersectionPoint,
-        secondIntersectionPoint,
-        pushForceFactor,
-        pushVector1,
-        pushVector2,
-        hueDifference;
+  totView.calculatePushForce = function(thisTot, otherTot, distance, thisRing, thatRing) {
+    var hueDifference,
+        pushForce;
 
-    intersections = getIntersections(
-                      thisTot.position.x, 
-                      thisTot.position.y, 
-                      i, 
-                      otherTot.position.x, 
-                      otherTot.position.y, 
-                      j
-                    );
-
-    firstIntersectionPoint = createVector(intersections[0], intersections[1]);
-    secondIntersectionPoint = createVector(intersections[2], intersections[3]);
-
-    if(!activeTotMode || (activeTotMode && totView.isActiveTot)) {
-      totView.renderIntersectShape(intersections, distance, otherTot.hue, i);
-    }
 
     // hueGap returns the value that is half the distance between thisHue and otherTot.hue
     // Value will be 0 - 63.75
@@ -249,22 +287,12 @@ function Tot(totOptions) {
 
     // Adjust the push force according to which field rings the force is
     // coming from, a higher force for a closer ring
-    pushForce = pushForce / (i * j);
+    pushForce = pushForce / (thisRing * thatRing);
 
     // Adjust pushForce by global push strength variable
     pushForce *= 800;
 
-    pushVector1 = p5.Vector.sub(thisTot.position, firstIntersectionPoint)
-      .normalize()
-      .mult(pushForce);
-
-    pushVector2 = p5.Vector.sub(thisTot.position, secondIntersectionPoint)
-      .normalize()
-      .mult(pushForce);
-
-    totView.forces.push(pushVector1);
-    totView.forces.push(pushVector2);
-    // console.log(pushVector1, pushVector2);
+    return pushForce;
   }
   
   totView.renderTot = function() {
@@ -275,15 +303,11 @@ function Tot(totOptions) {
       stroke(0, 0, 255, 100);
     }
 
-    if(totView.isActiveTot || !activeTotMode){
-      fill(hue, diversityValue, 200);
-    } else {
-      fill(hue, diversityValue, 200, 150);
-    }
+    fill(hue, diversityValue, 200);
 
     var theta = totView.velocity.heading() + radians(90);
 
-    ellipse(totView.position.x,totView.position.y, size, size);
+    ellipse(totView.position.x, totView.position.y, size, size);
 
     // push();
 
@@ -301,6 +325,28 @@ function Tot(totOptions) {
     // endShape();
 
     // pop();
+  }
+
+  totView.renderTotGaze = function(){
+    noStroke();
+    fill(0, 0, 200, 5);
+    var theta = totView.velocity.heading() + radians(90);
+
+    push();
+
+    translate(totView.position.x,totView.position.y);
+
+    rotate(theta);
+
+    beginShape();
+
+    vertex(0, -size);
+    vertex(-size*2, -(totView.fieldRadius - size));
+    vertex(size*2, -(totView.fieldRadius - size));
+
+    endShape();
+
+    pop();
   }
   
   totView.renderIntersectShape = function(intersections, distance, otherHue, i) {
@@ -412,10 +458,6 @@ function Tot(totOptions) {
     stroke(0, 0, 0);
     ellipse(totView.position.x, totView.position.y, 2*shapeSize, 2*shapeSize);
   }
-
-  totView.renderTotGaze = function(){
-    return;
-  }
   
   totView.renderField = function() {
     strokeWeight(1);
@@ -457,7 +499,13 @@ function Tot(totOptions) {
 
   totView.reset = function() {
     totView.acceleration.mult(0);
-    totView.velocity.mult(0.99999);
+    if(totView.isActiveTot){
+      totView.velocity.mult(0.99);
+    } else if(totView.forces.length === 0) {
+      totView.velocity.mult(0.9999);
+    } else {
+      totView.velocity.mult(0.9999);
+    }
     totView.forces = [];
     fieldPulseFrame += fieldPulseRate;
   }

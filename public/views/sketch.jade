@@ -10,11 +10,26 @@ html(lang="en-us")
         link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css')
 
         link(rel="stylesheet", href="/css/style.css")
-        script( language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js")
+        script(language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js")
         script(language="javascript" type="text/javascript").
-            var thisPage = "#{title}";
+            var thisPage = "#{title}",
+                sketchSelfTotSettings = {
+                    'isSelfTot': true,
+                    'personality': Number('#{session.selfTotSettings.personality}')/360 * 255,
+                    'confidence': Number('#{session.selfTotSettings.confidence}'),
+                    'sensitivity': Number('#{session.selfTotSettings.sensitivity}'),
+                    'sociability': Number('#{session.selfTotSettings.sociability}')
+                },
+                sliderSettings = {
+                  'totSlider': Number('#{session.sliderSettings.totSlider}'),
+                  'diversitySlider': Number('#{session.sliderSettings.diversitySlider}'),
+                  'sensitivitySlider': Number('#{session.sliderSettings.sensitivitySlider}'),
+                  'bounceSlider': Number('#{session.sliderSettings.bounceSlider}'),
+                  'pairSlider': Number('#{session.sliderSettings.pairSlider}'),
+                  'backgroundSlider': Number('#{session.sliderSettings.backgroundSlider}')
+                };
 
-                console.log('session in jade: ' + session);
+                console.log('session in jade: ' + '#{session.selfTotSettings.personality}');
 
         script( language="javascript" type="text/javascript" src="js/p5.js")
         script( language="javascript" type="text/javascript" src="js/p5.dom.js")
@@ -39,6 +54,7 @@ html(lang="en-us")
                         }
                     });
                 });
+                
                 $sideBarToggle.click(function(){
                     console.log('open!');
                     $sideBar.toggleClass('open');
@@ -46,7 +62,7 @@ html(lang="en-us")
             });
     body
         div(class="main-container")
-            div( class="side-bar")
+            div(id="side-bar" class="side-bar")
                 div( class="side-bar-header")
                     h1(id="side-bar-toggle" class="header")= title
                 ul( id="control-panel" class="control-panel")
@@ -128,4 +144,14 @@ html(lang="en-us")
                                 p( class="control-tip-copy") 
                                     em Click one to designate a protagonist. Use arrow keys to steer.
             div(id="sketch-container" class="sketch-container")
-            button(class="next-button" id="submit" type="submit")
+            div(id="status-bar" class="status-bar")
+                ul(class='status-list')
+                    hr
+                    li(class='status-item')
+                    li(class='status-item')
+                    li(class='status-item')
+                    li(class='status-item')
+                    li(class='status-item')
+                    li(class='status-item')
+                    li(class='status-button')
+                        button(class="next-button" id="submit" type="submit") Continue?

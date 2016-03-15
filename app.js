@@ -46,8 +46,7 @@ function appInit() {
 
   app.post('/load',function(req,res){
     sess = req.session;
-    //In this we are assigning email to sess.email variable.
-    //email comes from HTML page.
+
     sess.selfTotSettings = req.body.selfTotSettings;
     res.end('done');
   });
@@ -55,7 +54,27 @@ function appInit() {
   app.get('/sketch', function(req, res) {
     sess = req.session;
     console.log('sketch: ', sess);
-    res.render('sketch', {title: "SKETCH"});
+
+    if(!sess.selfTotSettings){
+      res.redirect('/');
+    }
+
+    sess.sliderSettings = {
+      'totSlider': 2,
+      'diversitySlider': 100,
+      'sensitivitySlider': 10,
+      'bounceSlider': 1,
+      'pairSlider': 1,
+      'backgroundSlider': 10
+    };
+
+    res.render('sketch', {title: "Social Explorer", session: sess});
+  });
+
+  app.get('/looking', function(req, res) {
+    sess = req.session;
+    console.log('sketch: ', sess);
+    res.render('sketch', {title: "Looking", session: req.session});
   });
 
   app.get('/sketch-json', function(req, res) {

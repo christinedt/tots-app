@@ -8,17 +8,19 @@ function TotSystem(options) {
       mouseClickVector,
       activeTot;
 
-  this.addTot = function(){
-    var newTot = new Tot(totOptions);
+  this.addTot = function(options){
+    var newTot = new Tot(options);
     tots.push(newTot);
   }
   
   this.runTots = function(sliderOptions){
     this.setTotRunOptions(sliderOptions);
-    
+    if(tots.length === 0){
+      this.addTot(sketchSelfTotSettings);
+    }
     if(sliderOptions.totAmount > tots.length) {
       for(var i = tots.length; i < sliderOptions.totAmount; i++){
-        this.addTot();
+        this.addTot(totOptions);
       }
     } else if(sliderOptions.totAmount < tots.length) {
       for(var i = sliderOptions.totAmount; i < tots.length; i++){
@@ -36,7 +38,7 @@ function TotSystem(options) {
   this.setTotRunOptions = function(sliderOptions) {
     var tempFieldSize;
 
-    tempFieldSize = 1000 - 35 * (sliderOptions.totAmount - 2);
+    tempFieldSize = 700 - 45 * (sliderOptions.totAmount - 2);
     totRunOptions.forceValue = sliderOptions.forceValue;
     totRunOptions.activeTotMode = sliderOptions.activeTotMode;
     totRunOptions.isPassThrough = sliderOptions.isPassThrough;
