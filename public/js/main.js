@@ -26,7 +26,7 @@ $(document).ready(function(){
 
         $.post('/load', {selfTotSettings: selfTotSettings}, function(data){        
             if(data==='done'){
-                window.location.href="/sketch";
+                window.location.href="/looking";
             }
         });
     });

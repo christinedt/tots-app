@@ -6,9 +6,10 @@ function Tot(totOptions) {
 
   totView.options = {
     'isSelfTot': totOptions.isSelfTot || false,
+    'lookFirst': false,
     'personality': totOptions.personality || 125,
     'confidence': totOptions.confidence || 125,
-    'sensitivity': totOptions.sensitivity || 125,
+    'sensitivity': totOptions.sensitivity || Math.floor(Math.random()*100),
     'sociability': totOptions.sociability || 125,
     'runInterference': true,
     'runTot': true,
@@ -17,7 +18,8 @@ function Tot(totOptions) {
     'activeTotMode': false,
     'wallMode': 'passThrough',
     'socialMode': 'pairing',
-    'diversityValue': false
+    'diversityValue': false,
+    'socialPoints': 0
   };
 
   var doRunInterference = true,
@@ -40,11 +42,37 @@ function Tot(totOptions) {
   totView.size = size;
   totView.radius = radius;
   totView.hue = hue;
-  totView.fieldRings = Math.floor(Math.random() * 20 + 5);
+  totView.fieldRings = Math.floor(map(totView.options.sensitivity, 0, 100, 4, 30));
   totView.position = createVector(tempXPos, tempYPos);
   totView.velocity = p5.Vector.random2D().mult(4);
   totView.acceleration = createVector(0, 0);
   totView.forces = [];
+
+  var getHueDifference = function(hue1, hue2) {
+    var hueDifference, hueGap;
+    hueDifference = Math.abs(hue1 - hue2);
+
+    if(hueDifference > 128) {
+      hueGap = (255 - hueDifference)/2;
+    } 
+
+    return hueDifference;
+  }
+
+  if(!totView.options.isSelfTot && thisPage != "Duet"){
+
+    while(getHueDifference(totView.hue, sketchSelfTotSettings.personality) < 20 || (getHueDifference(totView.hue, sketchSelfTotSettings.personality) > 108 )) {
+      totView.hue = Math.floor(Math.random() * 256);
+    }
+    console.log('self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
+  } else if(!totView.options.isSelfTot && thisPage == "Duet") {
+
+    while(getHueDifference(totView.hue, sketchSelfTotSettings.personality) < 120 ) {
+      totView.hue = Math.floor(Math.random() * 256);
+    }
+    console.log(thisPage + ' self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
+  }
+
 
   
   //totView.run(bills)
@@ -59,7 +87,6 @@ function Tot(totOptions) {
 
   totView.setVariables = function(totRunOptions) {
     pushForce = totRunOptions.forceValue;
-    activeTotMode = totRunOptions.activeTotMode;
     isPassThrough = totRunOptions.isPassThrough;
     isPairing = totRunOptions.isPairing;
     diversityValue = totRunOptions.diversityValue;
@@ -69,11 +96,8 @@ function Tot(totOptions) {
     totView.fieldIncrement = totView.fieldRadius/totView.fieldRings;
     totView.fieldIncrementMultiplier = Math.random() * 2 + 1;
 
-    if(activeTotMode) {
+    if(totView.options.isSelfTot) {
       fieldPulseRate = 0.5;
-    } else {
-      fieldPulseRate = 0;
-      totView.isActiveTot = false;
     }
   }
   
@@ -85,7 +109,7 @@ function Tot(totOptions) {
       bills.forEach(totView.runInterference, this);
     }
 
-    if(totView.isActiveTot) {
+    if(totView.options.isSelfTot && globals.activeTotMode) {
       totView.driveTot();
     }
 
@@ -152,13 +176,14 @@ function Tot(totOptions) {
   //totView.display()
   //Runs the functions that create the visual appearance of the Tot, no params
   totView.display = function() {
-    // if(activeTotMode && totView.isActiveTot){
-    //   totView.renderField();
-    // }
-    if(totView.options.displayTot){
+    if(totView.options.isSelfTot){
+      totView.renderField();
+    }
+
+    if(globals.bodyValue){
       totView.renderTot();
     }
-    if(totView.options.displayTotGaze){
+    if(globals.gazeValue){
       totView.renderTotGaze();
     }
   }
@@ -174,8 +199,8 @@ function Tot(totOptions) {
 
     fieldPulseFrame = fieldPulseFrame % totView.fieldIncrement;
     
-    //if otherTot is not thisTot
-    if(distance > 0) {
+    //if otherTot is not thisTot but is within field range
+    if(distance > 0 && distance < thisTot.fieldSize) {
 
       //for each ring of thisTot's field
       for(var thisRing = fieldPulseFrame; thisRing < thisTot.fieldRadius; thisRing+=thisTot.fieldIncrement) {
@@ -241,9 +266,14 @@ function Tot(totOptions) {
               // The intersection shape renders if it is not active tot mode, 
               // if it is and this is the active tot, or if this is the self tot
 
-              // if(totView.isActiveTot) {
-              if(!activeTotMode || (activeTotMode && totView.isActiveTot) || totView.options.isSelfTot) {
+              // if(totView.isActiveTot || totView.options.isSelfTot) {
+              if(globals.tensionValue && !globals.activeTotMode || (globals.tensionValue && globals.activeTotMode && totView.isActiveTot) || globals.tensionValue && totView.options.isSelfTot) {
                 totView.renderIntersectShape(intersections, distance, otherTot.hue, thisRing);
+              }
+
+              totView.options.socialPoints+=pushForce;
+              if(totView.options.isSelfTot && totView.options.socialPoints) {
+                // console.log(totView.options.socialPoints);
               }
 
               break;
@@ -263,24 +293,23 @@ function Tot(totOptions) {
 
   totView.calculatePushForce = function(thisTot, otherTot, distance, thisRing, thatRing) {
     var hueDifference,
-        pushForce;
-
+        pushForce,
+        diversityFactor;
 
     // hueGap returns the value that is half the distance between thisHue and otherTot.hue
     // Value will be 0 - 63.75
-
     hueDifference = totView.getHueGap(thisTot.hue, otherTot.hue);
 
-
-    //pushForce will be 0.68 to -0.313
+    // if the sketch is set to pairing, the tot will seek its opposite
+    // if the sketch is set to grouping, the tot will seek similar hues
+    // pushForce will be 0.68 to -0.313
     if(isPairing) {
-      pushForce = (43.75 - hueDifference)/63.75;
+      pushForce = (53.75 - hueDifference)/63.75;
     } else {
-      pushForce = (hueDifference - 20)/63.75;
+      pushForce = (hueDifference - 10)/63.75;
     }
       
-
-    var diversityFactor = map(diversityValue, 0, 255, 0, 1);
+    diversityFactor = map(diversityValue, 0, 255, 0, 1);
 
     // Adjust the pushForce by the amount that everyone is expressing
     pushForce *= diversityFactor;
@@ -290,7 +319,7 @@ function Tot(totOptions) {
     pushForce = pushForce / (thisRing * thatRing);
 
     // Adjust pushForce by global push strength variable
-    pushForce *= 800;
+    pushForce *= 600;
 
     return pushForce;
   }
@@ -298,12 +327,12 @@ function Tot(totOptions) {
   totView.renderTot = function() {
     noStroke();
 
-    if(totView.isActiveTot) {
+    if(totView.isActiveTot || totView.options.isSelfTot) {
       strokeWeight(4);
       stroke(0, 0, 255, 100);
     }
 
-    fill(hue, diversityValue, 200);
+    fill(totView.hue, diversityValue, 200);
 
     var theta = totView.velocity.heading() + radians(90);
 
@@ -316,11 +345,11 @@ function Tot(totOptions) {
     // rotate(theta);
 
     // beginShape();
+    // noStroke();
+    // fill(0);
 
-    // vertex(0, -size*2);
-    // vertex(-size, size*2);
-    // vertex(0, size);
-    // vertex(size, size*2);
+    // ellipse(-size/4, -size/4, 2, 2);
+    // ellipse(size/4, -size/4, 2, 2);
 
     // endShape();
 
@@ -357,7 +386,7 @@ function Tot(totOptions) {
 
     newHue = totView.averageHues(totView.hue, otherHue);
 
-    if(activeTotMode && totView.isActiveTot) {
+    if(globals.activeTotMode && totView.isActiveTot) {
       opacity = map(i, 0, totView.fieldSize, 0, 255);
       opacity = (255-opacity);
     } else {
@@ -370,9 +399,9 @@ function Tot(totOptions) {
     noStroke();
 
     for (var i = dotSize; i > 0; i--){
-      fill(newHue, diversityValue, 200, (opacity/3));
+      fill(newHue, diversityValue, 100, 255);
       ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
-      if(activeTotMode && totView.isActiveTot) {
+      if(globals.activeTotMode && totView.options.isSelfTot) {
         ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
       }
     }
@@ -463,7 +492,7 @@ function Tot(totOptions) {
     strokeWeight(1);
     noFill();
     for(var i = fieldPulseFrame; i < totView.fieldRadius; i+=totView.fieldIncrement){
-      var opacity = map(i, 0, totView.fieldRadius, 255, 0);
+      var opacity = map(i, 0, totView.fieldRadius, 10, 0);
       stroke(hue, 200, 200, opacity);
       ellipse(totView.position.x, totView.position.y, 2*i, 2*i);
     }
@@ -499,7 +528,7 @@ function Tot(totOptions) {
 
   totView.reset = function() {
     totView.acceleration.mult(0);
-    if(totView.isActiveTot){
+    if(totView.options.isSelfTot && globals.activeTotMode){
       totView.velocity.mult(0.99);
     } else if(totView.forces.length === 0) {
       totView.velocity.mult(0.9999);

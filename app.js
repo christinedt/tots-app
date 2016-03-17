@@ -51,50 +51,96 @@ function appInit() {
     res.end('done');
   });
 
-  app.get('/sketch', function(req, res) {
+  app.get('/looking', function(req, res) {
     sess = req.session;
-    console.log('sketch: ', sess);
 
     if(!sess.selfTotSettings){
       res.redirect('/');
     }
 
     sess.sliderSettings = {
-      'totSlider': 2,
+      'totSlider': 7,
       'diversitySlider': 100,
       'sensitivitySlider': 10,
       'bounceSlider': 1,
       'pairSlider': 1,
-      'backgroundSlider': 10
+      'backgroundSlider': 10,
+      'gazeSlider': 1,
+      'tensionSlider': 0,
+      'bodySlider': 1
     };
 
-    res.render('sketch', {title: "Social Explorer", session: sess});
+    res.render('sketch', {
+      title: "Looking", 
+      next_page: 'grouping', 
+      session: sess, 
+      poem: 'A lifetime of feeling there\'s no one for you...',
+      directive: 'Find your person'
+    });
   });
 
-  app.get('/looking', function(req, res) {
+  app.post('/sketch', function(req, res) {
     sess = req.session;
-    console.log('sketch: ', sess);
-    res.render('sketch', {title: "Looking", session: req.session});
+
+    sess.selfTotSettings = req.body.selfTotSettings;
+    sess.sliderSettings = req.body.sliderSettings;
+    res.end('done');
   });
 
-  app.get('/sketch-json', function(req, res) {
+  app.get('/grouping', function(req, res) {
     sess = req.session;
-    console.log(req.params);
+
+    if(!sess.selfTotSettings){
+      res.redirect('/');
+    }
+
+    sess.sliderSettings.pairSlider = 0;
+    res.render('sketch', {
+      title: "Grouping", 
+      next_page: 'duet', 
+      session: sess, 
+      poem: '... and a lifetime of finding no one like you...',
+      directive: 'Find your people'
+    });
   });
 
-  app.post('/update_sketch', function(req, res) {
+  app.get('/duet', function(req, res) {
     sess = req.session;
-    console.log(req.body);
+
+    if(!sess.selfTotSettings){
+      res.redirect('/');
+    }
+
+    sess.sliderSettings.totSlider = 1;
+    sess.sliderSettings.pairSlider = 1;
+    sess.sliderSettings.tensionSlider = 1;
+
+    res.render('sketch', {
+      title: "Duet", 
+      next_page: '', 
+      session: sess, 
+      poem: '...takes only one to undo', 
+      directive: 'Be patient'
+    });
   });
 
-  app.get('/hello', function(req, res) {
+  app.get('/free_play', function(req, res) {
     sess = req.session;
-    res.render('sketch', {title: "HELLO", session: sess});
-  });
 
-  app.get('/section-1', function(req, res) {
-    sess = req.session;
-    res.render('sketch', {title: "Section 1", session: sess});
+    if(!sess.selfTotSettings){
+      res.redirect('/');
+    }
+
+    sess.sliderSettings.totSlider = 1;
+    sess.sliderSettings.pairSlider = 1;
+
+    res.render('free_play', {
+      title: "Free play", 
+      next_page: '', 
+      session: sess, 
+      poem: '...takes only one to undo', 
+      directive: 'Free play!'
+    });
   });
 
   // Set server port
@@ -128,39 +174,3 @@ function socketsInit() {
     );
   });
 }
-
-// function handleRequest(req, res) {
-//   // What did we request?
-//   var pathname = req.url;
-
-//   // If blank let's ask for index.html
-//   if (pathname == '/') {
-//     pathname = '/index.html';
-//   }
-
-//   // Ok what's our file extension
-//   var ext = path.extname(pathname);
-
-//   // Map extension to file type
-//   var typeExt = {
-//     '.html': 'text/html',
-//     '.js':   'text/javascript',
-//     '.css':  'text/css'
-//   };
-
-//   // What is it?  Default to plain text
-//   var contentType = typeExt[ext] || 'text/plain';
-
-//   // Now read and write back the file with the appropriate content type
-//   fs.readFile(__dirname + pathname,
-//     function (err, data) {
-//       if (err) {
-//         res.writeHead(500);
-//         return res.end('Error loading ' + pathname);
-//       }
-//       // Dynamically setting content type
-//       res.writeHead(200,{ 'Content-Type': contentType });
-//       res.end(data);
-//     }
-//   );
-// }

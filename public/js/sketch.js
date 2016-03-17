@@ -7,6 +7,54 @@ var TotsUno,
     isActiveTotMode = false,
     sliderOptions = {};
 
+
+$(document).ready(function(){
+    var $sideBar = $('#side-bar'),
+        $sideBarToggle = $('#side-bar-toggle'),
+        $switches = $('input.switch');
+
+    $("#submit").click(function(){
+        sliderSettings = {
+          'totSlider': $('#tot-control').val(),
+          'diversitySlider': $('#diversity-control').val(),
+          'sensitivitySlider': $('#sensitivity-control').val(),
+          'bounceSlider': $('#bounce-control').val(),
+          'pairSlider': $('#pair-control').val(),
+          'backgroundSlider': $('#background-control').val(),
+          'gazeSlider': $('#gaze-control').val(),
+          'tensionSlider': $('#tension-control').val(),
+          'bodySlider': $('#body-control').val()
+        };
+
+        $.post("/sketch",{ selfTotSettings: sketchSelfTotSettings, sliderSettings: sliderSettings }, function(data){ 
+            if(data==='done'){
+                window.location.href="/" + nextPage;
+            }
+        });
+    });
+
+    $sideBarToggle.click(function(){
+        $sideBar.toggleClass('open');
+    });
+
+    $('#tot-portrait').css('background-color', 'hsla(' + Number(sketchSelfTotSettings.personality)/255 * 360 + ', 100%, 50%, 1)');
+    $('.stat-value').css('background-color', 'hsla(' + Number(sketchSelfTotSettings.personality)/255 * 360 + ', 100%, 50%, 1)');
+    $('.stat-value.confidence').css('width', sketchSelfTotSettings.confidence) + 'px';
+    $('.stat-value.sensitivity').css('width', sketchSelfTotSettings.sensitivity) + 'px';
+    $('.stat-value.sociability').css('width', sketchSelfTotSettings.sociability) + 'px';
+
+    window.onbeforeunload = function(){
+        sliderSettings = {
+          'totSlider': $('#tot-control').val(),
+          'diversitySlider': $('#diversity-control').val(),
+          'sensitivitySlider': $('#sensitivity-control').val(),
+          'bounceSlider': $('#bounce-control').val(),
+          'pairSlider': $('#pair-control').val(),
+          'backgroundSlider': $('#background-control').val()
+        };
+    };
+});
+
 function setup() {
   // socket = io.connect('https://boiling-escarpment-82743.herokuapp.com/');
   // socket.on('mouse',
@@ -21,13 +69,12 @@ function setup() {
   sketch = createCanvas(window.innerWidth, window.innerHeight, 'p2d')
     .parent("sketch-container");
 
-  activeTotButton = createButton('NO', true)
-    .parent("active-tot-button")
-    .class("button-input")
-    .id("active-tot-control")
-    .mousePressed(toggleActiveTotMode);
+  activeTotSlider = createSlider(0, 1, 1)
+    .parent("active-tot-slider")
+    .class("control-input switch off")
+    .id("active-tot-control");
   
-  totSlider = createSlider(2, 16, sliderSettings.totSlider)
+  totSlider = createSlider(2, 20, sliderSettings.totSlider)
     .parent("tot-slider")
     .class("control-input")
     .id("tot-control");
@@ -37,25 +84,37 @@ function setup() {
     .class("control-input")
     .id("diversity-control");
   
-  sensitivitySlider = createSlider(5, 30, sliderSettings.sensitivitySlider)
-    .parent("sensitivity-slider")
-    .class("control-input")
-    .id("sensitivity-control");
-  
   bounceSlider = createSlider(0, 1, sliderSettings.bounceSlider)
     .parent("bounce-slider")
-    .class("control-input switch")
+    .class("control-input toggle")
     .id("bounce-control");
   
   pairSlider = createSlider(0, 1, sliderSettings.pairSlider)
     .parent("pair-slider")
     .class("control-input switch")
     .id("pair-control");
+
+    console.log(sliderSettings.pairSlider);
   
   backgroundSlider = createSlider(0, 255, sliderSettings.backgroundSlider)
     .parent("background-slider")
     .class("control-input")
     .id("background-control");
+  
+  gazeSlider = createSlider(0, 1, sliderSettings.gazeSlider)
+    .parent("gaze-slider")
+    .class("control-input switch on")
+    .id("gaze-control");
+  
+  tensionSlider = createSlider(0, 1, sliderSettings.tensionSlider)
+    .parent("tension-slider")
+    .class("control-input switch on")
+    .id("tension-control");
+  
+  bodySlider = createSlider(0, 1, sliderSettings.bodySlider)
+    .parent("body-slider")
+    .class("control-input switch on")
+    .id("body-control");
 
   colorMode(HSB, 255);
   frameRate(10);
@@ -66,28 +125,32 @@ function setup() {
   TotsUno = new TotSystem(options);
   setSliderOptions();
 
-
   $('.control-input').on('change', function(e){
     setSliderOptions(e);
+  });
+
+  $('.control-input.switch').on('change', function(e){
+    $(e.currentTarget).toggleClass("off on");
   });
 }
 
 function draw() {
-  background(backgroundSlider.value(), 25);
+  background(backgroundSlider.value(), 50);
 
   TotsUno.runTots(sliderOptions);
 }
 
 function setSliderOptions(e) {
-  if(e){
-    console.log(e.currentTarget.id);
-  }
   sliderOptions.totAmount = totSlider.value();
-  sliderOptions.activeTotMode = isActiveTotMode;
+  sliderOptions.activeTotMode = activeTotSlider.value();
   sliderOptions.isPassThrough = bounceSlider.value();
   sliderOptions.isPairing = pairSlider.value();
   sliderOptions.diversityValue = diversitySlider.value();
-  sliderOptions.sensitivityValue = sensitivitySlider.value();
+
+  globals.gazeValue = gazeSlider.value();
+  globals.tensionValue = tensionSlider.value();
+  globals.bodyValue = bodySlider.value();
+  globals.activeTotMode = activeTotSlider.value();
 }
 
 function toggleActiveTotMode() {
@@ -98,11 +161,11 @@ function toggleActiveTotMode() {
   $activeTotContainer.toggleClass('on');
 
   if(isActiveTotMode){
-    activeTotButton.html('YES');
-    activeTotButton.addClass('on');    
+    activeTotSlider.html('YES');
+    activeTotSlider.addClass('on');    
   } else {
-    activeTotButton.html('NO');
-    activeTotButton.removeClass('on');
+    activeTotSlider.html('NO');
+    activeTotSlider.removeClass('on');
   }
 
   setSliderOptions();
@@ -113,7 +176,7 @@ function toggleActiveTotMode() {
 */
 
 function mousePressed() {
-  if(isActiveTotMode){
+  if(globals.activeTotMode){
     TotsUno.checkActiveTot(mouseX, mouseY);
   }
 }

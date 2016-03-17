@@ -8,7 +8,7 @@ html{
 
 body {
 	background-color: #000;
-	color: #fff;
+	color: #bac;
 	font-family: 'Yanone Kaffeesatz', sans-serif;
 	font-weight: 300;
 	height: 100%;
@@ -47,13 +47,15 @@ body {
 	opacity: 0.4;
 	overflow: hidden;
 	position: fixed;
+	right: 0;
+	top: 0;
 	width: 250px;
-	z-index: 2;
+	z-index: 5;
 
 	-webkit-transition: 0.5s;
     transition: 0.5s;
     &:hover {
-		background: #41356c;
+		background-color: #281f6c;
     	opacity: 0.8;
 
     	.side-bar-header {
@@ -63,12 +65,20 @@ body {
     	.tier-1-label {
 			background-color: #281f6c;
     	}
+
+    	.tier-1-menu-item {
+			background: #41356c;
+		}
     }
 
     &.open {
     	height: 100%;
+		overflow: scroll;
     	.control-panel {
     		height: auto;
+    	}
+    	&:hover .button-container {
+    		opacity: 1;
     	}
     }
 }
@@ -79,6 +89,7 @@ body {
 	opacity: 1;
 	position: relative;
 	width: 250px;
+	z-index: 4;
 
 	-webkit-transition: 0.5s;
     transition: 0.5s;
@@ -132,6 +143,11 @@ ul.control-panel {
 
 	-webkit-transition: 0.5s;
     transition: 0.5s;
+
+    &.hidden {
+    	position: absolute;
+    	visibility: hidden;
+    }
 }
 
 .tier-1-label {
@@ -178,16 +194,38 @@ ul.tier-2-control-panel {
 
 	-webkit-transition: 0.5s;
     transition: 0.5s;
-}
 
-.tier-2-control.tip {
-	font-size: 0.75em;
-	padding: 0;
-	text-align: center;
-	z-index: 3;
+    &.tip {
+		font-size: 0.75em;
+		padding: 0;
+		text-align: center;
+		z-index: 3;
+    }
 
-	-webkit-transition: 0.5s;
-    transition: 0.5s;
+    &.portrait {
+    	padding: 30px 0 10px;
+    }
+
+    &.toggle {
+    	.control-header {
+    		max-width: 50%;
+    		padding-right: 10px;
+    		text-align: right;
+    		width: 100px;
+    	}
+    	.switch-container {
+    		padding-left: 10px;
+    		text-align: left;
+    	}
+    	.control-header, 
+    	.switch-container {
+    		display: inline-block;
+    		float: none;
+    	}
+    	.control-input.switch {
+    		display: inline-block;
+    	}
+    }
 }
 
 .control-header {
@@ -197,11 +235,41 @@ ul.tier-2-control-panel {
 	padding: 5px 0;
 	text-align: center;
 	width: 100%;
+
+	&.toggle {
+		display: inline-block;
+	}
+	&.active-tot {
+		display: inline-block;
+		width: 80px;
+	}
+}
+
+.control-container {
+	display: block;
+	padding-bottom: 10px;
+
+	&.switch {
+		&:first-child {
+			padding: 10px 0 5px 0;
+		}
+		&:last-child {
+			padding: 5px 0 10px 0;
+		}
+		padding: 5px 0;
+	}
+	&.stat {
+		.control-header {
+			font-size: 14px;
+			width: 80px;
+		}
+	}
 }
 
 .control-tip-copy {
 	display: block;
 	margin: 0;
+	padding-bottom: 10px;
 }
 
 .control-input {
@@ -233,18 +301,16 @@ ul.tier-2-control-panel {
 .control-label {
 	color: #fff;
 	display: inline-block;
-	float: left;
 	font-size: 1em;
-	height: 50px;
 	position: relative;
 	text-align: center;
+	vertical-align: middle;
 	width: 30%;
 }
 
 .button-label {
 	color: #fff;
 	display: inline-block;
-	float: left;
 	height: 100%;
 	position: relative;
 	text-align: center;
@@ -253,26 +319,22 @@ ul.tier-2-control-panel {
 
 .slider-container {
 	display: inline-block;
-	float: left;
-	height: 50px;
 	position: relative;
+	vertical-align: middle;
 	width: 40%;
 }
 
 .switch-container {
 	display: inline-block;
-	float: left;
-	height: 50px;
 	position: relative;
+	vertical-align: middle;
 	width: 20%;
 }
 
 .switch-label {
 	color: #fff;
 	display: inline-block;
-	float: left;
 	font-size: 1em;
-	height: 50px;
     margin:auto; 
     position: relative;
 	text-align: center;
@@ -282,7 +344,6 @@ ul.tier-2-control-panel {
 
 .button-container {
 	display: inline-block;
-	float: left;
 	height: 100%;
 	position: relative;
 	width: 40%;
@@ -308,54 +369,75 @@ input[type=range] {
     border: 1px solid #bdc3c7;
     background-color: #fff; 
     width: 100%;
-}
 
-input[type=range].switch {
-    background-color: #fff;
-    border: 1px solid #bdc3c7;
-    border-radius: 10px;
-    height: 20px;
-    width: 40px;
-}
+    &.switch {
+	    border: 1px ridge #bdc3c7;
+	    border-radius: 11px;
+	    height: 20px;
+	    width: 35px;
 
-input[type='range']::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	background-color: #ecf0f1;
-	border: 1px solid #bdc3c7;
-	width: 20px;
-	height: 20px;
-	border-radius: 10px;
-	cursor: pointer;
-}
+	    &.off {
+		    background-color: #f00;
+	    }
+	    &.on {
+		    background-color: #0f0;
+	    }
 
-input[type='range'].hue.change::-webkit-slider-thumb {
-	-webkit-appearance: none;
-    background-color: attr(data-hue);
-}
+	    &::-webkit-slider-thumb {
+			width: 20px;
+			height: 20px;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+    }
 
+    &.toggle {
+	    background-color: #fff;
+	    border: 1px solid #bdc3c7;
+	    border-radius: 16px;
+	    height: 30px;
+	    width: 50px;
 
-input[type='range'].switch::-webkit-slider-thumb {
-	width: 20px;
-	height: 20px;
-	border-radius: 10px;
-	cursor: pointer;
+	    &::-webkit-slider-thumb {
+			width: 30px;
+			height: 30px;
+			border-radius: 15px;
+			cursor: pointer;
+		}
+	}
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		background-color: #ecf0f1;
+		border: 1px solid #bdc3c7;
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		cursor: pointer;
+	}
 }
 
 .next-button {
 	background-color: #bac;
 	border: none;
 	color: #fff;
+	display: block;
 	font-family: 'Yanone Kaffeesatz', sans-serif;
 	font-size: 14px;
+	margin: 0 auto;
 	padding: 7px 0;
 	text-align: center;
 	text-transform: uppercase;
 	width: 80px;
+
+	&:disabled {
+		background-color: #aaa;
+		color: #ccc;
+	}
 }
 
 .status-bar {
-	bottom: 0;
-	opacity: 0.4;
+	top: 0;
 	position: absolute;
 	width: 100%;
 	z-index: 4;
@@ -364,10 +446,9 @@ input[type='range'].switch::-webkit-slider-thumb {
     transition: 0.5s all;
 
 	&:hover {
-		opacity: 1;
 
-		.status-list {
-			top: 0;
+		.poem {
+			opacity: 1;
 		}
 	}
 
@@ -382,31 +463,66 @@ input[type='range'].switch::-webkit-slider-thumb {
 	}
 }
 
-.status-list {
-	display: flex;
-	justify-content: space-between;
-	list-style-type: none;
-	margin: 10px 0;
-	padding: 0 30px;
-	position: relative;
-	top: 60px;
-
-	-webkit-transition: 0.5s top;
-    transition: 0.5s top;
-}
-
-.status-item {
-	background-color: #ccc;
-	border-radius: 50%;
-	display: inline-block;
-	height: 10px;
-	position: relative;
-	top: 10px;
-	width: 10px;
-	z-index: 5;
-}
-
 .status-button {
 	display: inline-block;
 	z-index: 5;
+}
+
+.tot-portrait {
+	background-color: #f00;
+	border-radius: 50%;
+	display: block;
+	height: 20px;
+	margin: 0 auto;
+	position: relative;
+	width: 20px;
+	animation: 2s ease-in 0s infinite bounce;
+}
+
+.tot-shadow {
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 50%;
+	height: 5px;
+	margin: 5px auto 0;
+	width: 20px;
+	animation: 2s ease-in 0s infinite bounceShadow;
+}
+
+@keyframes bounce {
+    0%   {top: 0;}
+    50%  {top: -5px;}
+    100% {top: 0;}
+}
+
+@keyframes bounceShadow {
+    0%   {width: 20px;}
+    50%  {width: 15px;}
+    100% {width: 20px;}
+}
+
+.stat-bar {
+	border: 1px ridge #fff;
+	height: 10px;
+	vertical-align: middle;
+	width: 100px;
+}
+
+.stat-value {
+	background-color: #00f;
+	height: 10px;
+}
+
+.stat-container {
+	display: inline-block;
+}
+
+.poem {
+	opacity: 0;
+	text-align: center;
+	width: 100%;
+	transition: 0.5s all;
+}
+
+.next-button-container {
+	padding: 20px 0;
 }
