@@ -28,6 +28,21 @@ body {
 	text-align: center;
 }
 
+.black-screen {
+	background-color: #000;
+	height: 100%;
+	opacity: 0;
+	position: absolute;
+	visibility: hidden;
+	width: 100%;
+	z-index: -1;
+
+	&.visible {
+		visibility: visible;
+		z-index: 5;
+	}
+}
+
 @keyframes slidein {
 	0% {
 		opacity: 0;
@@ -103,4 +118,18 @@ input[type='range'].hue {
 	&:focus {
 		outline: none;
 	}
+}
+
+.sketch-container {
+	position: absolute;
+	top: 0;
+	z-index: 1;
+}
+
+.index-container {
+	height: 100%;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 2;
 }

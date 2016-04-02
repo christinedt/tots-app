@@ -11,13 +11,46 @@ html(lang="en-us")
         link(rel="stylesheet" href="/css/index.css")
         script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
         script(type='text/javascript' src="js/main.js")
+        script(language="javascript" type="text/javascript").
+            var thisPage = "#{title}",
+                nextPage = "#{next_page}",
+                sketchSelfTotSettings = {
+                    'isSelfTot': true,
+                    'personality': $('#inputHue').val(),
+                    'sensitivity': $('#inputSensitivity').val()
+                },
+                sliderSettings = {
+                  'totSlider': Number('#{session.sliderSettings.totSlider}'),
+                  'diversitySlider': Number('#{session.sliderSettings.diversitySlider}'),
+                  'sensitivitySlider': Number('#{session.sliderSettings.sensitivitySlider}'),
+                  'bounceSlider': Number('#{session.sliderSettings.bounceSlider}'),
+                  'pairSlider': Number('#{session.sliderSettings.pairSlider}'),
+                  'backgroundSlider': Number('#{session.sliderSettings.backgroundSlider}'),
+                  'gazeSlider': Number('#{session.sliderSettings.gazeSlider}'),
+                  'tensionSlider': Number('#{session.sliderSettings.tensionSlider}'),
+                  'bodySlider': Number('#{session.sliderSettings.bodySlider}')
+                },
+                globals = {
+                    'gazeValue': 1,
+                    'tensionValue': 1,
+                    'bodyValue': 1,
+                    'activeTotMode': 1
+                };
+        script( language="javascript" type="text/javascript" src="js/p5.js")
+        script( language="javascript" type="text/javascript" src="js/p5.dom.js")
+        script( language="javascript" type="text/javascript" src="js/equations.js")
+        script( language="javascript" type="text/javascript" src="js/Tot.js")
+        script( language="javascript" type="text/javascript" src="js/TotSystem.js")
+        script(type='text/javascript' src="js/sketch-index.js")
     body
+        div(class="black-screen")
         div(class="main-container")
-            h1(class="hello") Hello
-            div(class="form-container")
-                label(class="form-label" for="inputHue") Personality
-                input(class="form-input hue" type="range" min="0" max="360" id="inputHue" name="inputHue")
-                label(class="form-label" for="inputSensitivity") Sensitivity
-                input(class="form-input" id="inputSensitivity" min="0" max="100" name="inputConfidence" type="range")
-                button(class="form-button" type="submit" id="submit") Continue?
+            div(class="index-container")
+                h1(class="hello") Hello
+                div(class="form-container")
+                    label(class="form-label" for="inputHue") Personality
+                    input(class="form-input hue" type="range" min="0" max="360" id="inputHue" name="inputHue")
+                    label(class="form-label" for="inputSensitivity") Sensitivity
+                    input(class="form-input" id="inputSensitivity" min="0" max="100" name="inputSensitivity" type="range")
+                    button(class="form-button" type="submit" id="submit") Continue?
             div(id="sketch-container" class="sketch-container")

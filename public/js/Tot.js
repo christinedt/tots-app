@@ -9,7 +9,7 @@ function Tot(totOptions) {
     'lookFirst': false,
     'personality': totOptions.personality || 125,
     'confidence': totOptions.confidence || 125,
-    'sensitivity': totOptions.sensitivity || Math.floor(Math.random()*100),
+    'sensitivity': totOptions.sensitivity || Math.random() * 100,
     'sociability': totOptions.sociability || 125,
     'runInterference': true,
     'runTot': true,
@@ -28,7 +28,7 @@ function Tot(totOptions) {
       isPairing,
       diversityValue,
       fieldPulseRate = 1,
-      size = 12,
+      size = 17,
       hue = totOptions.personality || Math.floor(Math.random() * 256),
       fieldPulseFrame = 0,
       pushForce,
@@ -38,15 +38,17 @@ function Tot(totOptions) {
       tempYPos = Math.floor(Math.random() * (height-size) + size/2),
       previousTotOptions = {};
 
+// The totview.* options can be accessed by all the other Tots in the same TotSystem
   totView.isActiveTot = false;
   totView.size = size;
   totView.radius = radius;
   totView.hue = hue;
-  totView.fieldRings = Math.floor(map(totView.options.sensitivity, 0, 100, 4, 30));
+  totView.fieldRings = Math.floor(map(totView.options.sensitivity, 0, 100, 4, 40));
   totView.position = createVector(tempXPos, tempYPos);
   totView.velocity = p5.Vector.random2D().mult(4);
   totView.acceleration = createVector(0, 0);
   totView.forces = [];
+  totView.opacity = 255;
 
   var getHueDifference = function(hue1, hue2) {
     var hueDifference, hueGap;
@@ -65,11 +67,9 @@ function Tot(totOptions) {
       totView.hue = Math.floor(Math.random() * 256);
     }
     console.log('self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
-  } else if(!totView.options.isSelfTot && thisPage == "Duet") {
+  } else if(!totView.options.isSelfTot && thisPage === "Duet") {
 
-    while(getHueDifference(totView.hue, sketchSelfTotSettings.personality) < 120 ) {
-      totView.hue = Math.floor(Math.random() * 256);
-    }
+    totView.hue = (sketchSelfTotSettings.personality + 128)%255;
     console.log(thisPage + ' self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
   }
 
@@ -79,19 +79,33 @@ function Tot(totOptions) {
   //This is the function that runs every draw cycle. Controls
   //basic operation of the tot's various components
   totView.run = function(bills, totRunOptions) {
-    totView.setVariables(totRunOptions);
-    totView.update(bills);
+    if(totRunOptions){
+      totView.setVariables(totRunOptions);
+    }
+    if(bills){
+      totView.update(bills);
+    } else {
+      totView.update();
+    }
     totView.display();
     totView.reset();
   }
 
   totView.setVariables = function(totRunOptions) {
-    pushForce = totRunOptions.forceValue;
-    isPassThrough = totRunOptions.isPassThrough;
-    isPairing = totRunOptions.isPairing;
-    diversityValue = totRunOptions.diversityValue;
-    
-    totView.fieldSize = totRunOptions.fieldSize;
+    if(thisPage == "Index"){
+      totView.options.personality = totView.hue = totRunOptions.personality;
+      diversityValue = 255;
+      totView.fieldSize = 800;
+      isPassThrough = 1;
+    } else {
+      pushForce = totRunOptions.forceValue;
+      isPassThrough = totRunOptions.isPassThrough;
+      isPairing = totRunOptions.isPairing;
+      diversityValue = totRunOptions.diversityValue;
+      
+      totView.fieldSize = totRunOptions.fieldSize;
+    }
+
     totView.fieldRadius = totView.fieldSize/2;
     totView.fieldIncrement = totView.fieldRadius/totView.fieldRings;
     totView.fieldIncrementMultiplier = Math.random() * 2 + 1;
@@ -105,7 +119,7 @@ function Tot(totOptions) {
   //Updates the position vectors of the Tot, no params
   totView.update = function(bills) {
 
-    if(doRunInterference) {
+    if(doRunInterference && bills) {
       bills.forEach(totView.runInterference, this);
     }
 
@@ -118,7 +132,11 @@ function Tot(totOptions) {
     }
 
     totView.velocity.add(totView.acceleration.x, totView.acceleration.y);
-    totView.velocity.limit(7);
+    if(thisPage == "Index") {
+      totView.velocity.limit(3);
+    } else {
+      totView.velocity.limit(7);
+    }
     totView.position.add(totView.velocity.x, totView.velocity.y);
     if(isPassThrough === 1){
       totView.passThrough();
@@ -127,6 +145,8 @@ function Tot(totOptions) {
     }
   }
 
+  // The function that is called when the tot hits a boundary 
+  // and the boundary mode is bounce
   totView.checkForWalls = function() {
     if((totView.position.x - radius) <= 0){  
       totView.position.x = radius;
@@ -154,6 +174,8 @@ function Tot(totOptions) {
     }
   }
 
+  // The function that is called when the tot hits a boundary 
+  // and the boundary mode is pass through
   totView.passThrough = function() {
     if((totView.position.x + radius) <= 0){  
       totView.position.x = width;
@@ -177,7 +199,10 @@ function Tot(totOptions) {
   //Runs the functions that create the visual appearance of the Tot, no params
   totView.display = function() {
     if(totView.options.isSelfTot){
-      totView.renderField();
+      if(thisPage == "Index") {
+        totView.renderField();
+      }
+      // totView.renderAura();
     }
 
     if(globals.bodyValue){
@@ -267,14 +292,15 @@ function Tot(totOptions) {
               // if it is and this is the active tot, or if this is the self tot
 
               // if(totView.isActiveTot || totView.options.isSelfTot) {
-              if(globals.tensionValue && !globals.activeTotMode || (globals.tensionValue && globals.activeTotMode && totView.isActiveTot) || globals.tensionValue && totView.options.isSelfTot) {
+              if(globals.tensionValue) {
                 totView.renderIntersectShape(intersections, distance, otherTot.hue, thisRing);
               }
 
               totView.options.socialPoints+=pushForce;
-              if(totView.options.isSelfTot && totView.options.socialPoints) {
-                // console.log(totView.options.socialPoints);
-              }
+
+              // if(totView.options.isSelfTot && totView.options.socialPoints) {
+              //   console.log(totView.options.socialPoints);
+              // }
 
               break;
 
@@ -325,18 +351,32 @@ function Tot(totOptions) {
   }
   
   totView.renderTot = function() {
-    noStroke();
 
-    if(totView.isActiveTot || totView.options.isSelfTot) {
-      strokeWeight(4);
-      stroke(0, 0, 255, 100);
+    // if(totView.isActiveTot || totView.options.isSelfTot) {
+    //   strokeWeight(4);
+    //   stroke(0, 0, 255, 100);
+    // }
+    if(totView.options.socialPoints > 0) {
+      totView.opacity = 255*200/totView.options.socialPoints;
+    } else {
+      totView.opacity = 255;
     }
 
-    fill(totView.hue, diversityValue, 200);
+    console.log('render: ', totView.hue);
+    if(totView.options.isSelfTot){
+      noStroke();
+      fill(totView.hue, diversityValue, 200, totView.opacity);
+
+      ellipse(totView.position.x, totView.position.y, size, size);
+    } else {
+      noFill();
+      strokeWeight(4);
+      stroke(totView.hue, diversityValue, 200, totView.opacity);
+
+      ellipse(totView.position.x, totView.position.y, size-4, size-4);
+    }
 
     var theta = totView.velocity.heading() + radians(90);
-
-    ellipse(totView.position.x, totView.position.y, size, size);
 
     // push();
 
@@ -399,7 +439,7 @@ function Tot(totOptions) {
     noStroke();
 
     for (var i = dotSize; i > 0; i--){
-      fill(newHue, diversityValue, 100, 255);
+      fill(newHue, 255, 250, 255);
       ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
       if(globals.activeTotMode && totView.options.isSelfTot) {
         ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
@@ -489,10 +529,20 @@ function Tot(totOptions) {
   }
   
   totView.renderField = function() {
-    strokeWeight(1);
+    strokeWeight(3.5);
     noFill();
-    for(var i = fieldPulseFrame; i < totView.fieldRadius; i+=totView.fieldIncrement){
-      var opacity = map(i, 0, totView.fieldRadius, 10, 0);
+    for(var i = fieldPulseFrame%totView.fieldIncrement; i < totView.fieldRadius; i+=totView.fieldIncrement){
+      var opacity = map(i, 0, totView.fieldRadius, 30, 0);
+      stroke(totView.hue, 200, 200, opacity);
+      ellipse(totView.position.x, totView.position.y, 2*i, 2*i);
+    }
+  }
+  
+  totView.renderAura = function() {
+    strokeWeight(3.5);
+    noFill();
+    for(var i = fieldPulseFrame%totView.fieldIncrement; i < totView.fieldRadius/2; i+=totView.fieldIncrement){
+      var opacity = map(i, 0, totView.fieldRadius/2, 30, 0);
       stroke(hue, 200, 200, opacity);
       ellipse(totView.position.x, totView.position.y, 2*i, 2*i);
     }
@@ -500,7 +550,7 @@ function Tot(totOptions) {
 
   totView.driveTot = function() {
     var driveForceMag,
-        driveForceIncrement = 0.1;
+        driveForceIncrement = 0.02;
 
     if (keyIsDown(LEFT_ARROW))
       driveForce.add(-1 * driveForceIncrement, 0);
@@ -518,7 +568,7 @@ function Tot(totOptions) {
 
     driveForceMag = driveForce.mag();
 
-    
+    // this diinishes the drive force over time so the gas pedal doesn't get stuck
     if(driveForceMag > 0.01){
       driveForce.mult(0.9);
     } else if(driveForceMag > 0){

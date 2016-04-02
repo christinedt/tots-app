@@ -41,7 +41,20 @@ function appInit() {
   //set routes
   app.get('/', function(req, res) {
     sess = req.session;
-    res.render('index');
+
+    sess.sliderSettings = {
+      'totSlider': 1,
+      'diversitySlider': 200,
+      'sensitivitySlider': 10,
+      'bounceSlider': 1,
+      'pairSlider': 1,
+      'backgroundSlider': 10,
+      'gazeSlider': 1,
+      'tensionSlider': 1,
+      'bodySlider': 1
+    };
+
+    res.render('index', { title: "Index", next_page: "Looking", session: sess });
   });
 
   app.post('/load',function(req,res){
@@ -59,14 +72,14 @@ function appInit() {
     }
 
     sess.sliderSettings = {
-      'totSlider': 7,
-      'diversitySlider': 100,
+      'totSlider': 15,
+      'diversitySlider': 200,
       'sensitivitySlider': 10,
       'bounceSlider': 1,
       'pairSlider': 1,
       'backgroundSlider': 10,
       'gazeSlider': 1,
-      'tensionSlider': 0,
+      'tensionSlider': 1,
       'bodySlider': 1
     };
 
@@ -75,7 +88,7 @@ function appInit() {
       next_page: 'grouping', 
       session: sess, 
       poem: 'A lifetime of feeling there\'s no one for you...',
-      directive: 'Find your person'
+      directive: 'Look for your person ← ↑ → ↓'
     });
   });
 
@@ -100,7 +113,7 @@ function appInit() {
       next_page: 'duet', 
       session: sess, 
       poem: '... and a lifetime of finding no one like you...',
-      directive: 'Find your people'
+      directive: 'Look for your people ← ↑ → ↓'
     });
   });
 

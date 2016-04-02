@@ -4,7 +4,6 @@ html(lang="en-us")
     head
         meta(charset="utf-8")
         title= poem
-        meta(name="description", content="HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites. Spend more time developing and less time reinventing the wheel.")
         meta(name="viewport" content="width=device-width, initial-scale=1")
         link(rel="apple-touch-icon" href="apple-touch-icon.png")
         link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css')
@@ -16,7 +15,7 @@ html(lang="en-us")
                 nextPage = "#{next_page}",
                 sketchSelfTotSettings = {
                     'isSelfTot': true,
-                    'personality': Number('#{session.selfTotSettings.personality}')/360 * 255,
+                    'personality': Number('#{session.selfTotSettings.personality}'),
                     'confidence': Number('#{session.selfTotSettings.confidence}'),
                     'sensitivity': Number('#{session.selfTotSettings.sensitivity}'),
                     'sociability': Number('#{session.selfTotSettings.sociability}')
@@ -45,8 +44,9 @@ html(lang="en-us")
         script( language="javascript" type="text/javascript" src="js/TotSystem.js")
         script(type='text/javascript' src="js/sketch.js")
     body
+        div(class="black-screen visible")
         div(class="main-container")
-            div(id="side-bar" class="side-bar")
+            div(id="side-bar" class="side-bar hidden")
                 div( class="side-bar-header")
                     h1(id="side-bar-toggle" class="header") Settings
                 ul( id="control-panel" class="control-panel")
@@ -136,8 +136,8 @@ html(lang="en-us")
                             li( class="active-tot tier-2-control tip")
                                 p( class="control-tip-copy") 
                                     em Use arrow keys to steer.
+            div(id="sketch-container" class="sketch-container")
+            div(class="loop-button" id="loop-button") Loop
+            div(id="status-bar" class="status-bar")
                 div(class="next-button-container")
                     button(class="next-button" id="submit" type="submit") Continue?
-            div(id="sketch-container" class="sketch-container")
-            div(id="status-bar" class="status-bar")
-                h1(class="poem")= directive

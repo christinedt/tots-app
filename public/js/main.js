@@ -7,16 +7,17 @@ $(document).ready(function(){
         $inputSociability = $('#inputSociability'),
         $inputs = $(".form-input");
 
-    $inputHue.on('click', function(){
+    $inputHue.on('input', function(){
         hue = "hsl(" + $inputHue.val() + ", 100%, 50%)";
 
         $inputHue.css('background-color', hue);
         console.log($inputHue.val());
+        selfTotSettings.personality = $inputHue.val()/360 * 255;
     });
 
     $("#submit").click(function(){
         selfTotSettings = {
-            'personality': $inputHue.val(),
+            'personality': $inputHue.val()/360 * 255,
             'confidence': $inputConfidence.val(),
             'sensitivity': $inputSensitivity.val(),
             'sociability': $inputSociability.val()
@@ -26,7 +27,14 @@ $(document).ready(function(){
 
         $.post('/load', {selfTotSettings: selfTotSettings}, function(data){        
             if(data==='done'){
-                window.location.href="/looking";
+
+                // fade to black
+                $('.black-screen').addClass('visible').animate({ opacity: 1 }, 1000, 'swing', function(){
+
+                    // go to the first screen
+                    window.location.href="/looking";
+                });
+
             }
         });
     });

@@ -13,6 +13,12 @@ $(document).ready(function(){
         $sideBarToggle = $('#side-bar-toggle'),
         $switches = $('input.switch');
 
+    $('.black-screen').animate({ opacity: 0 }, 2000, 'swing', function(){
+        // go to the first screen
+        $('.black-screen').removeClass('visible');
+    });
+
+
     $("#submit").click(function(){
         sliderSettings = {
           'totSlider': $('#tot-control').val(),
@@ -26,9 +32,17 @@ $(document).ready(function(){
           'bodySlider': $('#body-control').val()
         };
 
+        console.log('social points: ', TotsUno.tots[0].options.socialPoints);
+
         $.post("/sketch",{ selfTotSettings: sketchSelfTotSettings, sliderSettings: sliderSettings }, function(data){ 
             if(data==='done'){
-                window.location.href="/" + nextPage;
+              // fade to black
+              $('.black-screen').addClass('visible').animate({ opacity: 1 }, 1000, 'swing', function(){
+
+                  // go to the first screen
+                  window.location.href="/" + nextPage;
+              });
+                
             }
         });
     });
@@ -93,8 +107,6 @@ function setup() {
     .parent("pair-slider")
     .class("control-input switch")
     .id("pair-control");
-
-    console.log(sliderSettings.pairSlider);
   
   backgroundSlider = createSlider(0, 255, sliderSettings.backgroundSlider)
     .parent("background-slider")
@@ -135,7 +147,7 @@ function setup() {
 }
 
 function draw() {
-  background(backgroundSlider.value(), 50);
+  background(backgroundSlider.value(), 70);
 
   TotsUno.runTots(sliderOptions);
 }
