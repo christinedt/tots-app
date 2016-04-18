@@ -133,7 +133,7 @@ function appInit() {
 
     res.render('sketch', {
       title: "Duet", 
-      next_page: '', 
+      next_page: 'free_play', 
       session: sess, 
       poem: '...takes only one to undo', 
       directive: 'Be patient'
@@ -154,7 +154,7 @@ function appInit() {
       title: "Free play", 
       next_page: '', 
       session: sess, 
-      poem: '...takes only one to undo', 
+      poem: 'Free Play', 
       directive: 'Free play!'
     });
   });
