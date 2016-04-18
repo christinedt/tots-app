@@ -48,7 +48,7 @@ function appInit() {
       'sensitivitySlider': 10,
       'bounceSlider': 1,
       'pairSlider': 1,
-      'backgroundSlider': 10,
+      'backgroundSlider': 225,
       'gazeSlider': 1,
       'tensionSlider': 1,
       'bodySlider': 1
@@ -72,12 +72,12 @@ function appInit() {
     }
 
     sess.sliderSettings = {
-      'totSlider': 15,
+      'totSlider': 13,
       'diversitySlider': 200,
       'sensitivitySlider': 10,
       'bounceSlider': 1,
       'pairSlider': 1,
-      'backgroundSlider': 10,
+      'backgroundSlider': 130,
       'gazeSlider': 1,
       'tensionSlider': 1,
       'bodySlider': 1
@@ -88,7 +88,7 @@ function appInit() {
       next_page: 'grouping', 
       session: sess, 
       poem: 'A lifetime of feeling there\'s no one for you...',
-      directive: 'Look for your person ← ↑ → ↓'
+      directive: 'Look for your person'
     });
   });
 
@@ -108,6 +108,8 @@ function appInit() {
     }
 
     sess.sliderSettings.pairSlider = 0;
+    sess.sliderSettings.backgroundSlider = 70;
+
     res.render('sketch', {
       title: "Grouping", 
       next_page: 'duet', 
@@ -127,6 +129,7 @@ function appInit() {
     sess.sliderSettings.totSlider = 1;
     sess.sliderSettings.pairSlider = 1;
     sess.sliderSettings.tensionSlider = 1;
+    sess.sliderSettings.backgroundSlider = 20;
 
     res.render('sketch', {
       title: "Duet", 

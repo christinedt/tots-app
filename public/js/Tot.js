@@ -1,54 +1,52 @@
 //Tot
-function Tot(totOptions) {
+function Tot(totInitOptions) {
 
   //Internal Properties
-  var totView = this;
 
-  totView.options = {
-    'isSelfTot': totOptions.isSelfTot || false,
-    'lookFirst': false,
-    'personality': totOptions.personality || 125,
-    'confidence': totOptions.confidence || 125,
-    'sensitivity': totOptions.sensitivity || Math.random() * 100,
-    'sociability': totOptions.sociability || 125,
-    'runInterference': true,
-    'runTot': true,
-    'displayTot': true,
-    'displayTotGaze': true,
-    'activeTotMode': false,
-    'wallMode': 'passThrough',
-    'socialMode': 'pairing',
-    'diversityValue': false,
-    'socialPoints': 0
-  };
+  // The variable thisTot will represent this particular instance of the Tot Class. It
+  // is thi tot referring to itself.
+  var thisTot = this;
 
-  var doRunInterference = true,
-      activeTotMode,
-      isPassThrough,
-      isPairing,
-      diversityValue,
-      fieldPulseRate = 1,
-      size = 17,
-      hue = totOptions.personality || Math.floor(Math.random() * 256),
-      fieldPulseFrame = 0,
-      pushForce,
-      driveForce = createVector(0, 0),
-      radius = size/2,
-      tempXPos = Math.floor(Math.random() * (width-size) + size/2),
-      tempYPos = Math.floor(Math.random() * (height-size) + size/2),
-      previousTotOptions = {};
+  // The thisTot.* options can be accessed by all the other Tots in the same TotSystem
 
-// The totview.* options can be accessed by all the other Tots in the same TotSystem
-  totView.isActiveTot = false;
-  totView.size = size;
-  totView.radius = radius;
-  totView.hue = hue;
-  totView.fieldRings = Math.floor(map(totView.options.sensitivity, 0, 100, 4, 40));
-  totView.position = createVector(tempXPos, tempYPos);
-  totView.velocity = p5.Vector.random2D().mult(4);
-  totView.acceleration = createVector(0, 0);
-  totView.forces = [];
-  totView.opacity = 255;
+  // Environmental properties
+
+  thisTot.isSelfTot = totInitOptions.isSelfTot ? totInitOptions.isSelfTot : false;
+  thisTot.isPassThrough = 1;
+  thisTot.isPairing = 1;
+  thisTot.doRunInterference = true;
+  thisTot.isActiveTot = false;
+
+  // Display/Personality properties
+
+  thisTot.size = 13;
+  thisTot.radius = thisTot.size/2;
+  thisTot.personality = totInitOptions.personality ? totInitOptions.personality : Math.floor(Math.random() * 256);
+  thisTot.opacity = 255;
+  thisTot.confidence = 255;
+  thisTot.introversion = totInitOptions.introversion ? totInitOptions.introversion : 0;
+  thisTot.lightness = 225;
+
+  // Newtonian properties
+
+  thisTot.position = createVector(Math.floor(Math.random() * (width-thisTot.size) + thisTot.radius), 
+                                  Math.floor(Math.random() * (height-thisTot.size) + thisTot.radius));
+  thisTot.velocity = p5.Vector.random2D().mult(4);
+  thisTot.acceleration = createVector(0, 0);
+  thisTot.forces = [];
+  thisTot.driveForce = createVector(0, 0);
+
+  // TotField properties
+
+  thisTot.sensitivity = totInitOptions.sensitivity ? totInitOptions.sensitivity : Math.random() * 100;
+  if(thisPage == "Duet") {
+    thisTot.sensitivity *= 2;
+  }
+  thisTot.fieldRings = Math.floor(map(thisTot.sensitivity, 0, 100, 4, 40));
+  thisTot.fieldPulseRate = 1;
+  thisTot.fieldSize;
+  thisTot.fieldPulseFrame = 0;
+
 
   var getHueDifference = function(hue1, hue2) {
     var hueDifference, hueGap;
@@ -61,176 +59,186 @@ function Tot(totOptions) {
     return hueDifference;
   }
 
-  if(!totView.options.isSelfTot && thisPage != "Duet"){
+  if(!thisTot.isSelfTot && thisPage != "Duet"){
 
-    while(getHueDifference(totView.hue, sketchSelfTotSettings.personality) < 20 || (getHueDifference(totView.hue, sketchSelfTotSettings.personality) > 108 )) {
-      totView.hue = Math.floor(Math.random() * 256);
+    while(getHueDifference(thisTot.personality, sketchSelfTotSettings.personality) < 20 || (getHueDifference(thisTot.personality, sketchSelfTotSettings.personality) > 108 )) {
+      thisTot.personality = Math.floor(Math.random() * 256);
     }
-    console.log('self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
-  } else if(!totView.options.isSelfTot && thisPage === "Duet") {
 
-    totView.hue = (sketchSelfTotSettings.personality + 128)%255;
-    console.log(thisPage + ' self hue: ' + sketchSelfTotSettings.personality + " this hue: " + totView.hue);
+  } else if(!thisTot.isSelfTot && thisPage == "Duet") {
+
+    thisTot.personality = (sketchSelfTotSettings.personality + 128)%255;
+
   }
 
 
   
-  //totView.run(bills)
+  //thisTot.run(tots)
   //This is the function that runs every draw cycle. Controls
   //basic operation of the tot's various components
-  totView.run = function(bills, totRunOptions) {
+  thisTot.run = function(tots, totRunOptions) {
     if(totRunOptions){
-      totView.setVariables(totRunOptions);
+      thisTot.setVariables(totRunOptions);
     }
-    if(bills){
-      totView.update(bills);
+    if(tots){
+      thisTot.update(tots);
     } else {
-      totView.update();
+      thisTot.update();
     }
-    totView.display();
-    totView.reset();
+    thisTot.display();
+    thisTot.reset();
   }
 
-  totView.setVariables = function(totRunOptions) {
+  thisTot.setVariables = function(totRunOptions) {
     if(thisPage == "Index"){
-      totView.options.personality = totView.hue = totRunOptions.personality;
-      diversityValue = 255;
-      totView.fieldSize = 800;
-      isPassThrough = 1;
+      thisTot.personality = totRunOptions.personality;
+      thisTot.fieldRings = Math.floor(map(totRunOptions.sensitivity, 0, 100, 4, 40));
+      thisTot.fieldSize = 800;
+      thisTot.isPassThrough = 1;
     } else {
-      pushForce = totRunOptions.forceValue;
-      isPassThrough = totRunOptions.isPassThrough;
-      isPairing = totRunOptions.isPairing;
-      diversityValue = totRunOptions.diversityValue;
+      thisTot.pushForce = totRunOptions.forceValue;
+      thisTot.isPassThrough = totRunOptions.isPassThrough;
+      thisTot.isPairing = totRunOptions.isPairing;
+      thisTot.confidence = totRunOptions.diversityValue;
       
-      totView.fieldSize = totRunOptions.fieldSize;
+      thisTot.fieldSize = totRunOptions.fieldSize;
     }
 
-    totView.fieldRadius = totView.fieldSize/2;
-    totView.fieldIncrement = totView.fieldRadius/totView.fieldRings;
-    totView.fieldIncrementMultiplier = Math.random() * 2 + 1;
+    thisTot.fieldRadius = thisTot.fieldSize/2;
+    thisTot.fieldIncrement = thisTot.fieldRadius/thisTot.fieldRings;
+    thisTot.fieldIncrementMultiplier = Math.random() * 2 + 1;
 
-    if(totView.options.isSelfTot) {
-      fieldPulseRate = 0.5;
-    }
+    // if(thisPage == "Duet") {
+    //   thisTot.fieldPulseRate = 1;
+    // } else if(thisTot.isSelfTot){
+    //   thisTot.fieldPulseRate = 0.5;
+    // }
   }
   
-  //totView.update()
+  //thisTot.update()
   //Updates the position vectors of the Tot, no params
-  totView.update = function(bills) {
+  thisTot.update = function(tots) {
 
-    if(doRunInterference && bills) {
-      bills.forEach(totView.runInterference, this);
+    if(thisTot.doRunInterference && tots) {
+      tots.forEach(thisTot.runInterference, this);
     }
 
-    if(totView.options.isSelfTot && globals.activeTotMode) {
-      totView.driveTot();
+    if(thisTot.isSelfTot && globals.activeTotMode) {
+      thisTot.driveTot();
     }
 
-    for(var i = 0; i < totView.forces.length; i++) {
-      totView.acceleration.add(totView.forces[i].x, totView.forces[i].y);
+    for(var i = 0; i < thisTot.forces.length; i++) {
+      thisTot.acceleration.add(thisTot.forces[i].x, thisTot.forces[i].y);
     }
 
-    totView.velocity.add(totView.acceleration.x, totView.acceleration.y);
+    thisTot.velocity.add(thisTot.acceleration.x, thisTot.acceleration.y);
     if(thisPage == "Index") {
-      totView.velocity.limit(3);
+      thisTot.velocity.limit(3);
     } else {
-      totView.velocity.limit(7);
+      thisTot.velocity.limit(7);
     }
-    totView.position.add(totView.velocity.x, totView.velocity.y);
-    if(isPassThrough === 1){
-      totView.passThrough();
+    thisTot.position.add(thisTot.velocity.x, thisTot.velocity.y);
+    if(thisTot.isPassThrough === 1){
+      thisTot.passThrough();
     } else {
-      totView.checkForWalls();
+      thisTot.checkForWalls();
     }
   }
 
   // The function that is called when the tot hits a boundary 
   // and the boundary mode is bounce
-  totView.checkForWalls = function() {
-    if((totView.position.x - radius) <= 0){  
-      totView.position.x = radius;
-      if(totView.velocity.x < 0){
-        totView.velocity.x *= -1; 
+  thisTot.checkForWalls = function() {
+    if((thisTot.position.x - thisTot.radius) <= 0){  
+      thisTot.position.x = thisTot.radius;
+      if(thisTot.velocity.x < 0){
+        thisTot.velocity.x *= -1; 
       }
     }
-    if((totView.position.x + radius) >= width){  
-      totView.position.x = width - radius; 
-      if(totView.velocity.x > 0){
-        totView.velocity.x *= -1; 
+    if((thisTot.position.x + thisTot.radius) >= width){  
+      thisTot.position.x = width - thisTot.radius; 
+      if(thisTot.velocity.x > 0){
+        thisTot.velocity.x *= -1; 
       }
     }
-    if((totView.position.y - radius) <= 0){ 
-      totView.position.y = radius; 
-      if(totView.velocity.y < 0){
-        totView.velocity.y *= -1; 
+    if((thisTot.position.y - thisTot.radius) <= 0){ 
+      thisTot.position.y = thisTot.radius; 
+      if(thisTot.velocity.y < 0){
+        thisTot.velocity.y *= -1; 
       }
     }
-    if((totView.position.y + radius) >= height){ 
-      totView.position.y = height - radius; 
-      if(totView.velocity.y > 0){
-        totView.velocity.y *= -1; 
+    if((thisTot.position.y + thisTot.radius) >= height){ 
+      thisTot.position.y = height - thisTot.radius; 
+      if(thisTot.velocity.y > 0){
+        thisTot.velocity.y *= -1; 
       }
     }
   }
 
   // The function that is called when the tot hits a boundary 
   // and the boundary mode is pass through
-  totView.passThrough = function() {
-    if((totView.position.x + radius) <= 0){  
-      totView.position.x = width;
+  thisTot.passThrough = function() {
+    if((thisTot.position.x + thisTot.radius) <= 0){  
+      thisTot.position.x = width;
     }
-    if((totView.position.x - radius) >= width){  
-      totView.position.x = 0 - radius;
+    if((thisTot.position.x - thisTot.radius) >= width){  
+      thisTot.position.x = 0 - thisTot.radius;
     }
-    if((totView.position.y + radius) <= 0){ 
-      totView.position.y = height;
+    if((thisTot.position.y + thisTot.radius) <= 0){ 
+      thisTot.position.y = height;
     }
-    if((totView.position.y - radius) >= height){ 
-      totView.position.y = 0 - radius;
+    if((thisTot.position.y - thisTot.radius) >= height){ 
+      thisTot.position.y = 0 - thisTot.radius;
     }
   }
 
-  totView.addForce = function(force, index, forces) {
-    totView.acceleration.add(force.x, force.y);
+  thisTot.addForce = function(force, index, forces) {
+    thisTot.acceleration.add(force.x, force.y);
   }
   
-  //totView.display()
+  //thisTot.display()
   //Runs the functions that create the visual appearance of the Tot, no params
-  totView.display = function() {
-    if(totView.options.isSelfTot){
-      if(thisPage == "Index") {
-        totView.renderField();
+  thisTot.display = function() {
+    if(thisTot.isSelfTot){
+      if(thisPage == "Index"){
+        thisTot.renderField();
+      } else if(thisPage !== "Duet"){
+        thisTot.renderAura();
       }
-      // totView.renderAura();
     }
 
     if(globals.bodyValue){
-      totView.renderTot();
+      thisTot.renderTot();
     }
     if(globals.gazeValue){
-      totView.renderTotGaze();
+      thisTot.renderTotGaze();
     }
   }
   
-  totView.runInterference = function(bill, index, bills) {
-  	var thisTot = totView,
-  		  otherTot = bill,
+  thisTot.runInterference = function(bill, index, tots) {
+  	var otherTot = bill,
         distance = p5.Vector.dist(thisTot.position, otherTot.position),
         dVector = p5.Vector.sub(otherTot.position, thisTot.position),
         dNormal = dVector.normalize(),
         thisRing,
-        thatRing;
+        thatRing,
+        thisRingIndex,
+        thatRingIndex;
 
-    fieldPulseFrame = fieldPulseFrame % totView.fieldIncrement;
+    // thisTot.fieldPulseFrame = thisTot.fieldPulseFrame % thisTot.fieldIncrement;
+
+    // var thisRingIndex = thisTot.fieldIncrement,
+    //     thatRingIndex = otherTot.fieldIncrement;
+
+    thisRingIndex = thisTot.fieldPulseFrame%thisTot.fieldIncrement,
+    thatRingIndex = thisTot.fieldPulseFrame%otherTot.fieldIncrement;
     
     //if otherTot is not thisTot but is within field range
     if(distance > 0 && distance < thisTot.fieldSize) {
 
       //for each ring of thisTot's field
-      for(var thisRing = fieldPulseFrame; thisRing < thisTot.fieldRadius; thisRing+=thisTot.fieldIncrement) {
+      for(var thisRing = thisRingIndex; thisRing < thisTot.fieldRadius; thisRing+=thisTot.fieldIncrement) {
         //for each ring of otherTot's field
-        for(var thatRing = fieldPulseFrame; thatRing < otherTot.fieldRadius; thatRing+=otherTot.fieldIncrement) {
+        for(var thatRing = thatRingIndex; thatRing < otherTot.fieldRadius; thatRing+=otherTot.fieldIncrement) {
           //check if the two rings intersect
           var areIntersecting = checkIntersect(
                                   thisTot.position.x, 
@@ -248,7 +256,7 @@ function Tot(totOptions) {
               var intersections,
                   firstIntersectionPoint,
                   secondIntersectionPoint,
-                  pushForce,
+                  thisPushForce,
                   pushVector1,
                   pushVector2,
                   hueDifference;
@@ -272,18 +280,22 @@ function Tot(totOptions) {
               secondIntersectionPoint = createVector(intersections[2], intersections[3]);
 
               // calculate pushForce
-              pushForce = totView.calculatePushForce(thisTot, otherTot, distance, thisRing, thatRing);
+              if(distance < thisTot.size) {
+                thisPushForce = 0;
+              } else {
+                thisPushForce = thisTot.calculatePushForce(thisTot, otherTot, distance, thisRing, thatRing);
+              }
 
               pushVector1 = p5.Vector.sub(thisTot.position, firstIntersectionPoint)
                 .normalize()
-                .mult(pushForce);
+                .mult(thisPushForce);
 
               pushVector2 = p5.Vector.sub(thisTot.position, secondIntersectionPoint)
                 .normalize()
-                .mult(pushForce);
+                .mult(thisPushForce);
 
-              totView.forces.push(pushVector1);
-              totView.forces.push(pushVector2);
+              thisTot.forces.push(pushVector1);
+              thisTot.forces.push(pushVector2);
 
 
               // Render the intersection shape if you'd like to
@@ -291,16 +303,16 @@ function Tot(totOptions) {
               // The intersection shape renders if it is not active tot mode, 
               // if it is and this is the active tot, or if this is the self tot
 
-              // if(totView.isActiveTot || totView.options.isSelfTot) {
+              // if(thisTot.isActiveTot || thisTot.isSelfTot) {
               if(globals.tensionValue) {
-                totView.renderIntersectShape(intersections, distance, otherTot.hue, thisRing);
+                thisTot.renderIntersectShape(intersections, distance, otherTot.personality, thisRing, thisPushForce);
               }
 
-              totView.options.socialPoints+=pushForce;
+              thisTot.introversion+=thisPushForce;
 
-              // if(totView.options.isSelfTot && totView.options.socialPoints) {
-              //   console.log(totView.options.socialPoints);
-              // }
+              if(thisTot.introversion > 200) {
+                thisTot.introversion = 200;
+              }
 
               break;
 
@@ -317,70 +329,73 @@ function Tot(totOptions) {
     }
   }
 
-  totView.calculatePushForce = function(thisTot, otherTot, distance, thisRing, thatRing) {
+  thisTot.calculatePushForce = function(thisTot, otherTot, distance, thisRing, thatRing) {
     var hueDifference,
-        pushForce,
-        diversityFactor;
+        calculatedPushForce,
+        confidenceFactor;
 
-    // hueGap returns the value that is half the distance between thisHue and otherTot.hue
+    // hueGap returns the value that is half the distance between thisHue and otherTot.personality
     // Value will be 0 - 63.75
-    hueDifference = totView.getHueGap(thisTot.hue, otherTot.hue);
+    hueDifference = thisTot.getHueGap(thisTot.personality, otherTot.personality);
 
     // if the sketch is set to pairing, the tot will seek its opposite
     // if the sketch is set to grouping, the tot will seek similar hues
-    // pushForce will be 0.68 to -0.313
-    if(isPairing) {
-      pushForce = (53.75 - hueDifference)/63.75;
+    // calculatedPushForce will be 0.68 to -0.313
+    if(thisTot.isPairing) {
+      calculatedPushForce = (53.75 - hueDifference)/63.75;
     } else {
-      pushForce = (hueDifference - 10)/63.75;
+      calculatedPushForce = (hueDifference - 10)/63.75;
     }
       
-    diversityFactor = map(diversityValue, 0, 255, 0, 1);
+    confidenceFactor = map(thisTot.confidence, 0, 255, 0, 1);
 
-    // Adjust the pushForce by the amount that everyone is expressing
-    pushForce *= diversityFactor;
+    // Adjust the calculatedPushForce by confidence. More confidence equals stronger force, either good or bad.
+    calculatedPushForce *= confidenceFactor;
 
     // Adjust the push force according to which field rings the force is
     // coming from, a higher force for a closer ring
-    pushForce = pushForce / (thisRing * thatRing);
+    calculatedPushForce = calculatedPushForce / (thisRing * thatRing);
 
     // Adjust pushForce by global push strength variable
-    pushForce *= 600;
+    calculatedPushForce *= 100;
 
-    return pushForce;
+    return calculatedPushForce;
   }
   
-  totView.renderTot = function() {
+  thisTot.renderTot = function() {
 
-    // if(totView.isActiveTot || totView.options.isSelfTot) {
+    // if(thisTot.isActiveTot || thisTot.isSelfTot) {
     //   strokeWeight(4);
     //   stroke(0, 0, 255, 100);
     // }
-    if(totView.options.socialPoints > 0) {
-      totView.opacity = 255*200/totView.options.socialPoints;
+    if(thisTot.introversion > 0) {
+
+      thisTot.opacity = 255 - (thisTot.introversion/2);
+      thisTot.confidence = 255 - thisTot.introversion;
     } else {
-      totView.opacity = 255;
+      thisTot.opacity = 255;
+      thisTot.confidence = 255;
     }
 
-    console.log('render: ', totView.hue);
-    if(totView.options.isSelfTot){
-      noStroke();
-      fill(totView.hue, diversityValue, 200, totView.opacity);
+    if(thisTot.isSelfTot){
+      strokeWeight(2);
+      stroke(thisTot.personality, thisTot.confidence, thisTot.lightness, thisTot.opacity*2);
+      fill(thisTot.personality, thisTot.confidence, thisTot.lightness, thisTot.opacity);
 
-      ellipse(totView.position.x, totView.position.y, size, size);
+      ellipse(thisTot.position.x, thisTot.position.y, thisTot.size, thisTot.size);
     } else {
+      strokeWeight(2);
+      stroke(thisTot.personality, thisTot.confidence, thisTot.lightness, thisTot.opacity);
       noFill();
-      strokeWeight(4);
-      stroke(totView.hue, diversityValue, 200, totView.opacity);
 
-      ellipse(totView.position.x, totView.position.y, size-4, size-4);
+      ellipse(thisTot.position.x, thisTot.position.y, thisTot.size, thisTot.size);
     }
 
-    var theta = totView.velocity.heading() + radians(90);
+    var theta = thisTot.velocity.heading() + radians(90);
 
     // push();
 
-    // translate(totView.position.x,totView.position.y);
+    // translate(thisTot.position.x,thisTot.position.y);
 
     // rotate(theta);
 
@@ -396,38 +411,47 @@ function Tot(totOptions) {
     // pop();
   }
 
-  totView.renderTotGaze = function(){
+  thisTot.renderTotGaze = function(){
     noStroke();
     fill(0, 0, 200, 5);
-    var theta = totView.velocity.heading() + radians(90);
+    var theta = thisTot.velocity.heading() + radians(90);
 
     push();
 
-    translate(totView.position.x,totView.position.y);
+    translate(thisTot.position.x,thisTot.position.y);
 
     rotate(theta);
 
     beginShape();
 
-    vertex(0, -size);
-    vertex(-size*2, -(totView.fieldRadius - size));
-    vertex(size*2, -(totView.fieldRadius - size));
+    vertex(0, -thisTot.size);
+    vertex(-thisTot.size*2, -(thisTot.fieldRadius - thisTot.size));
+    vertex(thisTot.size*2, -(thisTot.fieldRadius - thisTot.size));
 
     endShape();
 
     pop();
   }
   
-  totView.renderIntersectShape = function(intersections, distance, otherHue, i) {
-    var circleNormal = createVector(radius, 0),
+  thisTot.renderIntersectShape = function(intersections, distance, otherHue, i, thisPushForce) {
+    var circleNormal = createVector(thisTot.radius, 0),
         distIntA = createVector(intersections[0], intersections[1]),
         distIntB = createVector(intersections[2], intersections[3]),
         angle1, angle2, newHue, opacity;
 
-    newHue = totView.averageHues(totView.hue, otherHue);
+    newHue = thisTot.averageHues(thisTot.personality, otherHue);
 
-    if(globals.activeTotMode && totView.isActiveTot) {
-      opacity = map(i, 0, totView.fieldSize, 0, 255);
+    if(thisPushForce <= 0){
+      newHue = (newHue + thisTot.fieldPulseFrame)%255;
+    }
+
+    // if(thisPage == "Duet") {
+    //   newHue = (newHue + thisTot.fieldPulseFrame)%255;
+    // }
+
+
+    if(globals.activeTotMode && thisTot.isActiveTot) {
+      opacity = map(i, 0, thisTot.fieldSize, 0, 255);
       opacity = (255-opacity);
     } else {
       opacity = 200;
@@ -439,9 +463,10 @@ function Tot(totOptions) {
     noStroke();
 
     for (var i = dotSize; i > 0; i--){
-      fill(newHue, 255, 250, 255);
-      ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
-      if(globals.activeTotMode && totView.options.isSelfTot) {
+      fill(newHue, 255, 250, 100);
+
+      if(globals.activeTotMode && thisTot.isSelfTot) {
+        ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
         ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
       }
     }
@@ -481,7 +506,7 @@ function Tot(totOptions) {
     */
   }
 
-  totView.getHueGap = function(hue1, hue2) {
+  thisTot.getHueGap = function(hue1, hue2) {
     var hueDifference, hueGap;
     hueDifference = Math.abs(hue1 - hue2);
 
@@ -494,7 +519,7 @@ function Tot(totOptions) {
     return hueGap;
   }
 
-  totView.averageHues = function(hue1, hue2) {
+  thisTot.averageHues = function(hue1, hue2) {
     var baseHue, newHue, hueGap, hueDifference,
         maxHue = 255;
     hueDifference = Math.abs(hue1 - hue2);
@@ -521,71 +546,77 @@ function Tot(totOptions) {
     return newHue;
   }
   
-  totView.renderOverlapShape = function(shapeSize){
+  thisTot.renderOverlapShape = function(shapeSize){
     noFill();
     strokeWeight(2);
     stroke(0, 0, 0);
-    ellipse(totView.position.x, totView.position.y, 2*shapeSize, 2*shapeSize);
+    ellipse(thisTot.position.x, thisTot.position.y, 2*shapeSize, 2*shapeSize);
   }
   
-  totView.renderField = function() {
+  thisTot.renderField = function() {
     strokeWeight(3.5);
     noFill();
-    for(var i = fieldPulseFrame%totView.fieldIncrement; i < totView.fieldRadius; i+=totView.fieldIncrement){
-      var opacity = map(i, 0, totView.fieldRadius, 30, 0);
-      stroke(totView.hue, 200, 200, opacity);
-      ellipse(totView.position.x, totView.position.y, 2*i, 2*i);
+    for(var i = thisTot.fieldPulseFrame%thisTot.fieldIncrement; i < thisTot.fieldRadius; i+=thisTot.fieldIncrement){
+      var opacity = map(i, 0, thisTot.fieldRadius, 30, 0);
+      stroke(thisTot.personality, 200, 200, opacity);
+      ellipse(thisTot.position.x, thisTot.position.y, 2*i, 2*i);
     }
   }
   
-  totView.renderAura = function() {
+  thisTot.renderAura = function() {
     strokeWeight(3.5);
     noFill();
-    for(var i = fieldPulseFrame%totView.fieldIncrement; i < totView.fieldRadius/2; i+=totView.fieldIncrement){
-      var opacity = map(i, 0, totView.fieldRadius/2, 30, 0);
-      stroke(hue, 200, 200, opacity);
-      ellipse(totView.position.x, totView.position.y, 2*i, 2*i);
+    for(var i = thisTot.fieldPulseFrame%thisTot.fieldIncrement; i < thisTot.fieldRadius/2; i+=thisTot.fieldIncrement){
+      var opacity = map(i, 0, thisTot.fieldRadius/2, 10, 0);
+      stroke(200, opacity);
+      ellipse(thisTot.position.x, thisTot.position.y, 2*i, 2*i);
     }
   }
 
-  totView.driveTot = function() {
+  thisTot.driveTot = function() {
     var driveForceMag,
-        driveForceIncrement = 0.02;
+        driveForceIncrement;
+
+    if(thisPage == "Index") {
+      driveForceIncrement = 0.02;
+    } else {
+      driveForceIncrement = 0.15;
+    }
 
     if (keyIsDown(LEFT_ARROW))
-      driveForce.add(-1 * driveForceIncrement, 0);
+      thisTot.driveForce.add(-1 * driveForceIncrement, 0);
 
     if (keyIsDown(RIGHT_ARROW))
-      driveForce.add(driveForceIncrement, 0);
+      thisTot.driveForce.add(driveForceIncrement, 0);
 
     if (keyIsDown(UP_ARROW))
-      driveForce.add(0, -1 * driveForceIncrement);
+      thisTot.driveForce.add(0, -1 * driveForceIncrement);
 
     if (keyIsDown(DOWN_ARROW))
-      driveForce.add(0, driveForceIncrement);
+      thisTot.driveForce.add(0, driveForceIncrement);
 
-    totView.forces.push(driveForce);
+    thisTot.forces.push(thisTot.driveForce);
 
-    driveForceMag = driveForce.mag();
+    driveForceMag = thisTot.driveForce.mag();
 
-    // this diinishes the drive force over time so the gas pedal doesn't get stuck
+    // this diminishes the drive force over time so the gas pedal doesn't get stuck
     if(driveForceMag > 0.01){
-      driveForce.mult(0.9);
+      thisTot.driveForce.mult(0.9);
     } else if(driveForceMag > 0){
-      driveForce.mult(0);
+      thisTot.driveForce.mult(0);
     }
   }
 
-  totView.reset = function() {
-    totView.acceleration.mult(0);
-    if(totView.options.isSelfTot && globals.activeTotMode){
-      totView.velocity.mult(0.99);
-    } else if(totView.forces.length === 0) {
-      totView.velocity.mult(0.9999);
+  thisTot.reset = function() {
+    thisTot.acceleration.mult(0);
+    if(thisTot.isSelfTot && globals.activeTotMode){
+      thisTot.velocity.mult(0.99);
+    } else if(thisTot.forces.length === 0) {
+      thisTot.velocity.mult(0.9999);
     } else {
-      totView.velocity.mult(0.9999);
+      thisTot.velocity.mult(0.9999);
     }
-    totView.forces = [];
-    fieldPulseFrame += fieldPulseRate;
+    thisTot.forces = [];
+    thisTot.fieldPulseFrame += thisTot.fieldPulseRate;
   }
 }

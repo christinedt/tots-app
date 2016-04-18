@@ -21,8 +21,10 @@ function setup() {
   colorMode(HSB, 255);
 
   setSliderOptions();
+  
   $('.form-input').on('input', function(e){
     setSliderOptions(e);
+    $(':focus').blur();
   });
 
   sketch = createCanvas(window.innerWidth, window.innerHeight, 'p2d')
@@ -32,7 +34,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 70);
+  background(225, 70);
 
   TotUno.run(false, sliderOptions);
 }

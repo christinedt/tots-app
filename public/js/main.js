@@ -11,19 +11,16 @@ $(document).ready(function(){
         hue = "hsl(" + $inputHue.val() + ", 100%, 50%)";
 
         $inputHue.css('background-color', hue);
-        console.log($inputHue.val());
+
         selfTotSettings.personality = $inputHue.val()/360 * 255;
     });
 
     $("#submit").click(function(){
         selfTotSettings = {
             'personality': $inputHue.val()/360 * 255,
-            'confidence': $inputConfidence.val(),
             'sensitivity': $inputSensitivity.val(),
-            'sociability': $inputSociability.val()
+            'introversion': 0
         }
-
-        console.log(selfTotSettings);
 
         $.post('/load', {selfTotSettings: selfTotSettings}, function(data){        
             if(data==='done'){

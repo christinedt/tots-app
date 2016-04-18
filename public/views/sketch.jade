@@ -8,17 +8,16 @@ html(lang="en-us")
         link(rel="apple-touch-icon" href="apple-touch-icon.png")
         link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300' rel='stylesheet' type='text/css')
 
-        link(rel="stylesheet", href="/css/style.css")
-        script(language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js")
+        link(rel="stylesheet", href="/css/sketch.css")
+        script(language="javascript" type="text/javascript" src="js/lib/jquery-2.1.3.min.js")
         script(language="javascript" type="text/javascript").
             var thisPage = "#{title}",
                 nextPage = "#{next_page}",
                 sketchSelfTotSettings = {
                     'isSelfTot': true,
                     'personality': Number('#{session.selfTotSettings.personality}'),
-                    'confidence': Number('#{session.selfTotSettings.confidence}'),
                     'sensitivity': Number('#{session.selfTotSettings.sensitivity}'),
-                    'sociability': Number('#{session.selfTotSettings.sociability}')
+                    'introversion': Number('#{session.selfTotSettings.introversion}')
                 },
                 sliderSettings = {
                   'totSlider': Number('#{session.sliderSettings.totSlider}'),
@@ -35,10 +34,10 @@ html(lang="en-us")
                     'gazeValue': 1,
                     'tensionValue': 1,
                     'bodyValue': 1,
-                    'activeTotMode': 0
+                    'activeTotMode': 1
                 };
-        script( language="javascript" type="text/javascript" src="js/p5.js")
-        script( language="javascript" type="text/javascript" src="js/p5.dom.js")
+        script( language="javascript" type="text/javascript" src="js/lib/p5.js")
+        script( language="javascript" type="text/javascript" src="js/lib/p5.dom.js")
         script( language="javascript" type="text/javascript" src="js/equations.js")
         script( language="javascript" type="text/javascript" src="js/Tot.js")
         script( language="javascript" type="text/javascript" src="js/TotSystem.js")
@@ -46,7 +45,7 @@ html(lang="en-us")
     body
         div(class="black-screen visible")
         div(class="main-container")
-            div(id="side-bar" class="side-bar hidden")
+            div(id="side-bar" class="side-bar")
                 div( class="side-bar-header")
                     h1(id="side-bar-toggle" class="header") Settings
                 ul( id="control-panel" class="control-panel")

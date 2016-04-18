@@ -6,6 +6,7 @@ body {
 	font-weight: 200;
 	height: 100%;
 	margin: 0;
+	overflow: hidden;
 	text-transform: uppercase;
 	padding: 0;
 	position: relative;
@@ -28,6 +29,20 @@ body {
 	text-align: center;
 }
 
+.arrows {
+	animation-delay: 1.5s;
+	animation-duration: 3s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: 1;
+	animation-name: slidein;
+	color: #fff;
+	font-size: 20px;
+	font-weight: 300;
+	margin: 0;
+	opacity: 0;
+	text-align: center;
+}
+
 .black-screen {
 	background-color: #000;
 	height: 100%;
@@ -46,11 +61,11 @@ body {
 @keyframes slidein {
 	0% {
 		opacity: 0;
-		padding-top: 3em;
+		padding-top: 1em;
 	}
 	100% {
 		opacity: 1;
-		padding-top: 2em;
+		padding-top: 0;
 	}
 }
 
@@ -76,7 +91,7 @@ body {
 	animation-iteration-count: 1;
 	animation-name: slidein;
 	display: block;
-	margin: 0 auto;
+	margin: 30px auto 0;
 	opacity: 0;
 	padding-top: 3em;
 	text-align: center;
@@ -127,7 +142,8 @@ input[type='range'].hue {
 }
 
 .index-container {
-	height: 100%;
+	max-height: 100%;
+	padding-top: 100px;
 	position: absolute;
 	top: 0;
 	width: 100%;

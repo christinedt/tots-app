@@ -51,7 +51,7 @@ function TotSystem(options) {
 
   this.setTotRunOptions = function(sliderOptions) {
     var tempFieldSize;
-    tempFieldSize = 800 - 35 * (sliderOptions.totAmount - 2);
+    tempFieldSize = 500 - 25 * (sliderOptions.totAmount - 2);
     if(sliderOptions.totAmount == 2) {
       tempFieldSize = 2000;
     }

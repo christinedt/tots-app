@@ -32,7 +32,9 @@ $(document).ready(function(){
           'bodySlider': $('#body-control').val()
         };
 
-        console.log('social points: ', TotsUno.tots[0].options.socialPoints);
+        sketchSelfTotSettings.introversion = TotsUno.tots[0].introversion;
+
+        console.log('social points: ', TotsUno.tots[0].introversion);
 
         $.post("/sketch",{ selfTotSettings: sketchSelfTotSettings, sliderSettings: sliderSettings }, function(data){ 
             if(data==='done'){
@@ -147,7 +149,7 @@ function setup() {
 }
 
 function draw() {
-  background(backgroundSlider.value(), 70);
+  background(backgroundSlider.value(), 80);
 
   TotsUno.runTots(sliderOptions);
 }

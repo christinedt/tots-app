@@ -9,7 +9,7 @@ html(lang="en-us")
         link(href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:300,700' rel='stylesheet' type='text/css')
 
         link(rel="stylesheet" href="/css/index.css")
-        script(language="javascript", type="text/javascript", src="js/jquery-2.1.3.min.js")
+        script(language="javascript", type="text/javascript", src="js/lib/jquery-2.1.3.min.js")
         script(type='text/javascript' src="js/main.js")
         script(language="javascript" type="text/javascript").
             var thisPage = "#{title}",
@@ -36,8 +36,8 @@ html(lang="en-us")
                     'bodyValue': 1,
                     'activeTotMode': 1
                 };
-        script( language="javascript" type="text/javascript" src="js/p5.js")
-        script( language="javascript" type="text/javascript" src="js/p5.dom.js")
+        script( language="javascript" type="text/javascript" src="js/lib/p5.js")
+        script( language="javascript" type="text/javascript" src="js/lib/p5.dom.js")
         script( language="javascript" type="text/javascript" src="js/equations.js")
         script( language="javascript" type="text/javascript" src="js/Tot.js")
         script( language="javascript" type="text/javascript" src="js/TotSystem.js")
@@ -47,6 +47,7 @@ html(lang="en-us")
         div(class="main-container")
             div(class="index-container")
                 h1(class="hello") Hello
+                h2(class="arrows") ← ↑ → ↓
                 div(class="form-container")
                     label(class="form-label" for="inputHue") Personality
                     input(class="form-input hue" type="range" min="0" max="360" id="inputHue" name="inputHue")
