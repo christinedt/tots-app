@@ -150,6 +150,7 @@ function appInit() {
 
     sess.sliderSettings.totSlider = 15;
     sess.sliderSettings.pairSlider = 1;
+    sess.sliderSettings.tensionSlider = 1;
     sess.sliderSettings.visible = true;
 
     res.render('sketch', {

@@ -379,9 +379,6 @@ function Tot(totInitOptions) {
     } else if(thisPage != "Free play"){
       thisTot.opacity = 255;
       thisTot.confidence = 255;
-    } else if( thisPage =="Free play" && thisTot.introversion > 0) {
-      thisTot.opacity -= (thisTot.introversion/10);
-      thisTot.confidence -= (thisTot.introversion/10);
     }
 
     if(thisTot.isSelfTot){
