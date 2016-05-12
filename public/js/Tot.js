@@ -304,11 +304,15 @@ function Tot(totInitOptions) {
               // if it is and this is the active tot, or if this is the self tot
 
               // if(thisTot.isActiveTot || thisTot.isSelfTot) {
-              if(globals.tensionValue) {
+              if(globals.tensionValue || thisTot.isSelfTot) {
                 thisTot.renderIntersectShape(intersections, distance, otherTot.personality, thisRing, thisPushForce);
               }
 
               thisTot.introversion+=thisPushForce;
+
+              if(thisTot.isSelfTot){
+                // console.log(thisTot.introversion);
+              }
 
               if(thisTot.introversion > 200) {
                 thisTot.introversion = 200;
@@ -368,13 +372,16 @@ function Tot(totInitOptions) {
     //   strokeWeight(4);
     //   stroke(0, 0, 255, 100);
     // }
-    if(thisTot.introversion > 0) {
+    if(thisPage != "Free play" && thisTot.introversion > 0) {
 
       thisTot.opacity = 255 - (thisTot.introversion/2);
       thisTot.confidence = 255 - thisTot.introversion;
-    } else {
+    } else if(thisPage != "Free play"){
       thisTot.opacity = 255;
       thisTot.confidence = 255;
+    } else if( thisPage =="Free play" && thisTot.introversion > 0) {
+      thisTot.opacity -= (thisTot.introversion/10);
+      thisTot.confidence -= (thisTot.introversion/10);
     }
 
     if(thisTot.isSelfTot){
@@ -459,14 +466,15 @@ function Tot(totInitOptions) {
         
     
     //Dots
-    var dotSize = 2;
+    var dotSize = 2.5;
     noStroke();
 
     for (var i = dotSize; i > 0; i--){
-      fill(newHue, 255, 250, 100);
+      fill(newHue, thisTot.confidence, 250, 100);
 
-      if(globals.activeTotMode && thisTot.isSelfTot) {
-        ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
+      ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
+
+      if(globals.activeTotMode && thisTot.isSelfTot && !globals.tensionValue) {
         ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
       }
     }

@@ -44,8 +44,11 @@ html(lang="en-us")
         script(type='text/javascript' src="js/sketch.js")
     body
         div(class="black-screen visible")
+        div(id="cut-screen" class="cut-screen visible")
+            h1(class="cut-screen-header")= directive
+            button(class="next-button" id="cut-screen-button" type="submit") Continue?
         div(class="main-container")
-            div(id="side-bar" class="side-bar hidden")
+            div(id="side-bar" class="side-bar #{session.sliderSettings.visible ? '' : 'hidden'}")
                 div( class="side-bar-header")
                     h1(id="side-bar-toggle" class="header") Settings
                 ul( id="control-panel" class="control-panel")
@@ -115,7 +118,7 @@ html(lang="en-us")
                                     div( id="diversity-slider" class="slider-container")
                                     div( class="control-label")
                                         span( class="label-contents") Express
-                    li( class="tier-1-menu-item")
+                    li( class="tier-1-menu-item hidden")
                         label( for="self-menu-toggle" class="tier-1-label") Self
                         input( id="self-menu-toggle" name="self-menu-toggle" type="checkbox" class="")
                         ul( class="tier-2-control-panel self")
@@ -136,7 +139,6 @@ html(lang="en-us")
                                 p( class="control-tip-copy") 
                                     em Use arrow keys to steer.
             div(id="sketch-container" class="sketch-container")
-            div(class="loop-button" id="loop-button") Loop
-            div(id="status-bar" class="status-bar")
+            div(id="status-bar" class="status-bar transparent")
                 div(class="next-button-container")
-                    button(class="next-button" id="submit" type="submit") Continue?
+                    button(class="next-button" id="submit" type="submit") Continue ↓

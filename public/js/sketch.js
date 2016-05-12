@@ -11,13 +11,20 @@ var TotsUno,
 $(document).ready(function(){
     var $sideBar = $('#side-bar'),
         $sideBarToggle = $('#side-bar-toggle'),
-        $switches = $('input.switch');
+        $switches = $('input.switch'),
+        $blackScreen = $('.black-screen');
 
-    $('.black-screen').animate({ opacity: 0 }, 2000, 'swing', function(){
+    $blackScreen.animate({ opacity: 0 }, 2000, 'swing', function(){
         // go to the first screen
-        $('.black-screen').removeClass('visible');
+        $blackScreen.removeClass('visible');
     });
 
+    $("#cut-screen-button").click(function(){
+      $('#cut-screen').animate({ opacity: 0 }, 1000, 'swing', function(){
+        $('#cut-screen').removeClass('visible');
+        loop();
+      });
+    });
 
     $("#submit").click(function(){
         sliderSettings = {
@@ -130,6 +137,15 @@ function setup() {
     .class("control-input switch on")
     .id("body-control");
 
+
+  $('.control-input').on('change', function(e){
+    setSliderOptions(e);
+  });
+
+  $('.control-input.switch').on('change', function(e){
+    $(e.currentTarget).toggleClass("off on");
+  });
+
   colorMode(HSB, 255);
   frameRate(10);
 
@@ -139,13 +155,8 @@ function setup() {
   TotsUno = new TotSystem(options);
   setSliderOptions();
 
-  $('.control-input').on('change', function(e){
-    setSliderOptions(e);
-  });
+  noLoop();
 
-  $('.control-input.switch').on('change', function(e){
-    $(e.currentTarget).toggleClass("off on");
-  });
 }
 
 function draw() {

@@ -28,15 +28,26 @@ function TotSystem(options) {
     // if the slider value of tots is more than the current amount of tots, 
     // add new tots until it is the same amount
     if(sliderOptions.totAmount > totSystemView.tots.length) {
-      for(var i = totSystemView.tots.length; i < sliderOptions.totAmount; i++){
+      if(thisPage == "Free play") {
+        for(var i = totSystemView.tots.length; i < sliderOptions.totAmount; i++){
+          this.addTot(totOptions);
+        }
+      } else if(thisPage == "Duet" && frameCount == 300) {
+        this.addTot(totOptions);
+      } else if(frameCount%80 == 0) {
         this.addTot(totOptions);
       }
+
       // or, if the slider value of tots is less than the current amount of tots,
       // remove tots until the amounts are the same
     } else if(sliderOptions.totAmount < totSystemView.tots.length) {
       for(var i = sliderOptions.totAmount; i < totSystemView.tots.length; i++){
         totSystemView.tots.pop();
       }
+    } 
+
+    if(frameCount == 1800) {
+      $('.status-bar').removeClass('transparent');
     }
     // every frame, run each tot in the tot system
   	totSystemView.tots.forEach(this.runTot);

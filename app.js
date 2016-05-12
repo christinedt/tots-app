@@ -43,6 +43,7 @@ function appInit() {
     sess = req.session;
 
     sess.sliderSettings = {
+      'visible': false,
       'totSlider': 1,
       'diversitySlider': 200,
       'sensitivitySlider': 10,
@@ -79,7 +80,7 @@ function appInit() {
       'pairSlider': 1,
       'backgroundSlider': 130,
       'gazeSlider': 1,
-      'tensionSlider': 1,
+      'tensionSlider': 0,
       'bodySlider': 1
     };
 
@@ -88,7 +89,7 @@ function appInit() {
       next_page: 'grouping', 
       session: sess, 
       poem: 'A lifetime of feeling there\'s no one for you...',
-      directive: 'Look for your person'
+      directive: 'Connect with another'
     });
   });
 
@@ -115,7 +116,7 @@ function appInit() {
       next_page: 'duet', 
       session: sess, 
       poem: '... and a lifetime of finding no one like you...',
-      directive: 'Look for your people ← ↑ → ↓'
+      directive: 'Connect with others'
     });
   });
 
@@ -147,10 +148,11 @@ function appInit() {
       res.redirect('/');
     }
 
-    sess.sliderSettings.totSlider = 1;
+    sess.sliderSettings.totSlider = 15;
     sess.sliderSettings.pairSlider = 1;
+    sess.sliderSettings.visible = true;
 
-    res.render('free_play', {
+    res.render('sketch', {
       title: "Free play", 
       next_page: '', 
       session: sess, 
